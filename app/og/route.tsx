@@ -11,5 +11,5 @@ export async function GET(req: NextRequest) {
   ).then((res) => res.arrayBuffer());
   const fontData = await font;
 
-  return <></>
+  return null
 }
