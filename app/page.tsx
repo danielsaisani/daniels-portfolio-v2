@@ -3,7 +3,7 @@ export default function Page() {
     <section>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">my portfolio</h1>
       <p className="prose prose-neutral dark:prose-invert">
-        This is your new portfolio.
+          Hey there, I'm Daniel :)<br/>Feel free to chill out and take a look around my page and see what i've been up to and what i've been thinking about!
       </p>
     </section>
   );

@@ -63,13 +63,6 @@ export default function RootLayout({
         <SandpackCSS />
       </head>
       <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
-      <div className="top-0 left-0 absolute size-20">
-        <img
-            className="object-cover object-center rounded h-8 lg:h-auto mr-4"
-            alt="It's me! :)"
-            src="opengraph-image.png"
-        />
-      </div>
       <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
         <Navbar/>
         {children}
