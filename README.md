@@ -1,5 +1,3 @@
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fleerob%2Fleerob.io)
-
 - **Framework**: [Next.js](https://nextjs.org/)
 - **Database**: [Postgres](https://vercel.com/postgres)
 - **Authentication**: [NextAuth.js](https://next-auth.js.org)
@@ -8,7 +6,6 @@
 - **Analytics**: [Vercel Analytics](https://vercel.com/analytics)
 
 ## Running Locally
-
 This application requires Node.js v18.17+.
 
 ## Database Schema
@@ -34,4 +31,15 @@ CREATE TABLE views (
   slug VARCHAR(255) PRIMARY KEY,
   count INT NOT NULL
 );
+```
+
+``` mdx
+---
+publishedAt: '2024/05/04'
+title: Hello there! o.O
+---
+
+Hey there :)
+
+I'm very excited to introduce my blog.
 ```
