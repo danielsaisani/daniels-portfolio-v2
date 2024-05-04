@@ -1,7 +1,7 @@
 import postgres from 'postgres';
 
 export const sql = postgres(process.env.POSTGRES_URL, {
-  ssl: 'allow',
+  // ssl: 'allow',
 });
 
 const nextConfig = {
@@ -17,7 +17,6 @@ const nextConfig = {
       SELECT source, destination, permanent
       FROM redirects;
     `;
-
     return redirects.map(({ source, destination, permanent }) => ({
       source,
       destination,

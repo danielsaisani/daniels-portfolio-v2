@@ -67,7 +67,7 @@ export default function RootLayout({
         <img
             className="object-cover object-center rounded h-8 lg:h-auto mr-4"
             alt="It's me! :)"
-            src="./coding.png"
+            src="opengraph-image.png"
         />
       </div>
       <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
