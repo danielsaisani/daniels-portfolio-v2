@@ -60,7 +60,7 @@ export default function RootLayout({
       )}
     >
     <head>
-      <link rel="icon" href="/img/favicon.ico" sizes="any"/>
+      <link rel="icon" href="/static/favicon.ico" sizes="any"/>
       <SandpackCSS/>
     </head>
     <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
