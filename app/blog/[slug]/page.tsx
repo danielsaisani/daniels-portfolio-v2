@@ -23,8 +23,8 @@ export async function generateMetadata({
     image,
   } = post.metadata;
   let ogImage = image
-    ? `https://danielsaisani.com${image}`
-    : `https://danielsaisani.com/og?title=${title}`;
+    ? `https://beta.danielsaisani.com${image}`
+    : `https://beta.danielsaisani.com/og?title=${title}`;
 
   return {
     title,
@@ -34,7 +34,7 @@ export async function generateMetadata({
       description,
       type: 'article',
       publishedTime,
-      url: `https://danielsaisani.com/blog/${post.slug}`,
+      url: `https://beta.danielsaisani.com/blog/${post.slug}`,
       images: [
         {
           url: ogImage,
@@ -104,12 +104,12 @@ export default function Blog({ params }) {
             dateModified: post.metadata.publishedAt,
             description: post.metadata.summary,
             image: post.metadata.image
-              ? `https://danielsaisani.com${post.metadata.image}`
-              : `https://danielsaisani.com/og?title=${post.metadata.title}`,
-            url: `https://danielsaisani.com/blog/${post.slug}`,
+              ? `https://beta.danielsaisani.com${post.metadata.image}`
+              : `https://beta.danielsaisani.com/og?title=${post.metadata.title}`,
+            url: `https://beta.danielsaisani.com/blog/${post.slug}`,
             author: {
               '@type': 'Person',
-              name: 'Lee Robinson',
+              name: 'Daniel Saisani',
             },
           }),
         }}
