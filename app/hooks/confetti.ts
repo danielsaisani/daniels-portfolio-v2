@@ -3,10 +3,6 @@ import { tsParticles } from "tsparticles-engine";
 import { loadConfettiPreset } from "tsparticles-preset-confetti";
 import { wait } from "@hapi/hoek";
 
-interface ConfettiProps {
-  celebrationType?: "integrator" | "payment";
-}
-
 export default function useConfetti() {
   const triggerConfetti = async () => {
     loadConfettiPreset(tsParticles);
