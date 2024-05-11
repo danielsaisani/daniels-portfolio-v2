@@ -7,7 +7,6 @@ import useConfetti from "../hooks/confetti";
 
 export default function Form() {
   const formRef = useRef<HTMLFormElement>(null);
-  const useConfettings = useConfetti
 
   return (
     <form
@@ -16,7 +15,7 @@ export default function Form() {
       action={async (formData) => {
         await saveGuestbookEntry(formData);
         formRef.current?.reset();
-        await useConfetti()
+        useConfetti()
       }}
     >
       <input
