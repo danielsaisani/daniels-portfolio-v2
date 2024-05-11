@@ -6,18 +6,19 @@ import { Navbar } from './components/nav';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
+import { NextUIProvider } from "@nextui-org/react";
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://danielsaisani.com'),
+  metadataBase: new URL(process.env.BASE_URL!),
   title: {
     default: 'Daniel Saisani',
     template: '%s | Daniel Saisani',
   },
-  description: 'Engineer, entrepreneur, and creator.',
+  description: 'Engineer, innovator, and content creator.',
   openGraph: {
     title: 'Daniel Saisani',
-    description: 'Engineer, entrepreneur, and creator.',
-    url: 'https://danielsaisani.com',
+    description: 'Engineer, innovator, and content creator.',
+    url: process.env.BASE_URL,
     siteName: 'Daniel Saisani',
     locale: 'en_US',
     type: 'website',
@@ -65,10 +66,12 @@ export default function RootLayout({
     </head>
     <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
       <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
+         {/*<NextUIProvider>*/}
         <Navbar/>
         {children}
         <Analytics/>
         <SpeedInsights/>
+         {/*</NextUIProvider>*/}
       </main>
       </body>
     </html>
