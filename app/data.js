@@ -4,7 +4,7 @@ export const projects = [
     subtitle: "Python",
     description:
       "This project is all about taking the search algorithms we learn about in CS, and visually displaying how they traverse a graph of equidistant nodes to find the shortest path between two nodes in an undirected graph. I.e find the shortest path between two points.",
-    image: "./project-1.gif",
+    image: "./path-finder.gif",
     link: "https://github.com/DxnielKS/path-finder",
   },
   {

@@ -7,7 +7,6 @@ export default function Page() {
           <h1 className="font-medium text-2xl mb-8 tracking-tighter">my work</h1>
           <section>
               <Projects/>
-              <Skills/>
           </section>
       </section>
   );
