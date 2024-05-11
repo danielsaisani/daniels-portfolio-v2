@@ -13,7 +13,7 @@ export default function GuestbookPage() {
   return (
     <section>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
-        sign my guestbook
+        leave your mark
       </h1>
       <Suspense>
         <GuestbookForm />

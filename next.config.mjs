@@ -1,8 +1,10 @@
 import postgres from 'postgres';
 
-export const sql = postgres(process.env.POSTGRES_URL, {
-  ssl: 'allow',
-});
+const testing = process.env.TESTING==="true"
+export const sql = postgres(process.env.POSTGRES_URL, {ssl: !testing,});
+
+
+
 
 const nextConfig = {
   experimental: {
