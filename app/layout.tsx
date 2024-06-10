@@ -6,7 +6,7 @@ import { Navbar } from './components/nav';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
-import { NextUIProvider } from "@nextui-org/react";
+import { CSPostHogProvider } from './providers'
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL!),
@@ -60,6 +60,7 @@ export default function RootLayout({
         GeistMono.variable
       )}
     >
+    <CSPostHogProvider>
     <head>
       <link rel="icon" href="/static/favicon.ico" sizes="any"/>
       <SandpackCSS/>
@@ -74,6 +75,7 @@ export default function RootLayout({
          {/*</NextUIProvider>*/}
       </main>
       </body>
+    </CSPostHogProvider>
     </html>
   );
 }
