@@ -1,6 +1,12 @@
 "use client"
 import {Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Button} from "@nextui-org/react";
 import React from "react";
+import posthog from 'posthog-js'
+
+if (!window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
+    posthog.init('phc_dh52uHLuDUsmafEF0ONkFb6EEDkw12n7Fx6fUCRTRAe', { api_host: 'https://eu.i.posthog.com', person_profiles: 'identified_only' })
+    posthog.startSessionRecording()
+}
 
 export default function Page() {
   return (

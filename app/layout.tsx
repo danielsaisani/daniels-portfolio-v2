@@ -7,12 +7,6 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
 import { CSPostHogProvider } from './providers'
-import posthog from 'posthog-js'
-
-if (!window.location.host.includes('127.0.0.1') && !window.location.host.includes('localhost')) {
-    posthog.init('phc_dh52uHLuDUsmafEF0ONkFb6EEDkw12n7Fx6fUCRTRAe', { api_host: 'https://eu.i.posthog.com', person_profiles: 'identified_only' })
-    posthog.startSessionRecording()
-}
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL!),
