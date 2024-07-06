@@ -1,14 +1,18 @@
 "use client"
 
 import React from "react";
+import Image from "next/image";
 
 export default function Page() {
   return (
-      <>
+      <div className={'animate-fadeIn'}>
           <h1 className="font-medium text-2xl mb-8 tracking-tighter">hey there, i'm Daniel 👾</h1>
               <p className="prose prose-neutral dark:prose-invert">
-                  I'm a full-stack engineer, innovator and content creator. If you want to be up to date with the stuff I get up to, the things I build and the content I make then you're in the right place!<br/>How..<br/>do..<br/>I..<br/>Even do this? How do you website? I don't know; but what I do know is that you'll enjoy your time here. Thanks for coming ;)
+                 full-stack engineer @ terra YC W21 and comp sci grad from KCL
               </p>
-      </>
+            <div className="prose prose-neutral dark:prose-invert">
+                <Image className={'rounded-2xl hover:scale-[1.05] duration-200'} src={'/static/selfies/daniel-on-amsterdam-stage.jpg'} alt={'me on stage'} width={200} height={200}/>
+            </div>
+      </div>
   );
 }

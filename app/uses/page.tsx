@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function UsesPage() {
   return (
-    <section>
+    <section className={'animate-fadeIn'}>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
         here's my setup
       </h1>

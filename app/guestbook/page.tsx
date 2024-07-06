@@ -11,7 +11,7 @@ export const metadata = {
 
 export default function GuestbookPage() {
   return (
-    <section>
+    <section className={'animate-fadeIn'}>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
         leave your mark
       </h1>

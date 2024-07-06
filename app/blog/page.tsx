@@ -6,16 +6,16 @@ import { getBlogPosts } from 'app/db/blog';
 
 export const metadata = {
   title: 'Blog',
-  description: 'Read my thoughts on software development, design, and more.',
+  description: 'Read my thoughts on software development, productivity and more.',
 };
 
 export default function BlogPage() {
   let allBlogs = getBlogPosts();
 
   return (
-    <section>
+    <section className={'animate-fadeIn'}>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
-        my opinions, projects and untamed thoughts all let loose onto a page
+        my stories, opinions, projects and untamed thoughts all let loose onto a page
       </h1>
       {allBlogs
         .sort((a, b) => {
@@ -32,7 +32,7 @@ export default function BlogPage() {
             className="flex flex-col space-y-1 mb-4"
             href={`/blog/${post.slug}`}
           >
-            <div className="w-full flex flex-col">
+            <div className="w-full flex flex-col hover:bg-gray-100 hover:bg-opacity-15 duration-200 rounded-md p-2">
               <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
                 {post.metadata.title}
               </p>
