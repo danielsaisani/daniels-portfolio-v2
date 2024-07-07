@@ -1,5 +1,3 @@
-"use client";
-
 import './global.css';
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
@@ -11,7 +9,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
 import { CSPostHogProvider } from './providers';
 import BottomBar from "./components/BottomBar";
-import { usePathname } from 'next/navigation';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL!),
@@ -58,8 +55,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const isBlogPage = pathname.startsWith('/blog');
+
 
   return (
     <html
@@ -84,7 +80,7 @@ export default function RootLayout({
             {children}
             <Analytics/>
             <SpeedInsights/>
-            {!isBlogPage && <BottomBar />}
+            <BottomBar />
           </main>
         </body>
       </CSPostHogProvider>
