@@ -18,27 +18,31 @@ export default function Page() {
               <Project projectPicture={'tourbi.png'} projectUrl={'https://github.com/DxnielKS/tour-bi'}/>
 
 
-                <Link href={'https://www.tiktok.com/@clipscartel'} target={'_blank'}>
+
                   <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-5 hover:scale-[1.05] duration-200">
+                      <Link href={'https://www.tiktok.com/@clipscartel'} target={'_blank'}>
                       <Image
                           removeWrapper
                           alt="tiktok incubator"
                           className="z-0 w-full h-full object-cover rounded-3xl"
                           src="/static/tiktok.png"
                       />
+                       </Link>
                   </Card>
-                </Link>
 
-                <Link href={'https://github.com/DxnielKS/path-finder'} target={'_blank'}>
+
+
                   <Card isFooterBlurred className="w-full h-[300px] col-span-12 sm:col-span-7 hover:scale-[1.05] duration-200">
+                       <Link href={'https://github.com/DxnielKS/path-finder'} target={'_blank'}>
                       <Image
                           removeWrapper
                           alt="path finder"
                           className="z-0 w-full h-full object-cover rounded-3xl"
                           src="/static/path-finder.gif"
                       />
+                                   </Link>
                   </Card>
-               </Link>
+
           </div>
       </section>
 );

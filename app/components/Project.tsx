@@ -12,15 +12,17 @@ interface ProjectProps {
 
 export default function Project(props: ProjectProps) {
     return (
-        <Link href={props.projectUrl ? props.projectUrl : "/work"} target={'_blank'}>
+
             <Card className="col-span-4 h-[300px] hover:scale-[1.05] duration-200" isHoverable>
+                <Link href={props.projectUrl ? props.projectUrl : "/work"} target={'_blank'}>
                   <Image
                       removeWrapper
                       alt={props.projectPicture}
                       className="z-0 w-full h-full object-cover rounded-3xl"
                       src={`/static/${props.projectPicture}`}
                   />
+                    </Link>
             </Card>
-        </Link>
+
     )
 }
