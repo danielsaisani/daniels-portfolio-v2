@@ -65,7 +65,11 @@ export default function RootLayout({
     >
     <CSPostHogProvider>
       <head>
-        <link rel="icon" href="/static/favicon.ico" sizes="any"/>
+        <link rel="icon" href="/img/favicon.ico" sizes="any"/>
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png"/>
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png"/>
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png"/>
+        <link rel="manifest" href="/img/site.webmanifest"/>
         <SandpackCSS/>
       </head>
       <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
