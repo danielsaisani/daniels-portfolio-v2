@@ -7,7 +7,7 @@ import Image from "next/image";
 
 export default function BottomBar () {
     return (
-        <div>
+        <div className={''}>
             <div className={'absolute bottom-2 left-2'}>
                 <Link href={'/uses'}>
                     <Button className={'outline-0'}>
