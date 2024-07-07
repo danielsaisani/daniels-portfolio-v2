@@ -9,7 +9,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
 import { CSPostHogProvider } from './providers'
 import BottomBar from "./components/BottomBar";
-import { useRouter } from 'next/router';
+import { usePathname } from 'next/navigation';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL!),
@@ -57,8 +57,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
 
-  const router = useRouter();
-  const isBlogPage = router.pathname.startsWith('/blog');
+  const pathname = usePathname();
+  const isBlogPage = pathname.startsWith('/blog');
 
   return (
     <html
