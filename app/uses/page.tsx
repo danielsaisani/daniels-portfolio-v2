@@ -6,6 +6,11 @@ export const metadata: Metadata = {
     "Here's what tech I'm currently using for coding, and creating.",
 };
 
+// OLD RIG
+// GTX 1050
+// INTEL PENTIUM G4560
+// 8GB RAM
+
 export default function UsesPage() {
   return (
     <section className={'animate-fadeIn'}>
