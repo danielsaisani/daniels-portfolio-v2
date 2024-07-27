@@ -3,6 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+html, body, #__next {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Other styles you posted */
 ::selection {
   background-color: #47a3f3;
   color: #fefefe;
@@ -36,9 +43,10 @@ html {
   min-width: 360px;
 }
 
+/* Tailwind CSS prose styling */
+
 .prose .anchor {
   @apply absolute invisible no-underline;
-
   margin-left: -1em;
   padding-right: 0.5em;
   width: 80%;

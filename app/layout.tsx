@@ -9,6 +9,9 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
 import { CSPostHogProvider } from './providers';
 import BottomBar from "./components/BottomBar";
+import Link from "next/link";
+import {Button} from "@nextui-org/button";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.BASE_URL!),
@@ -75,13 +78,21 @@ export default function RootLayout({
           <SandpackCSS/>
         </head>
         <body className="antialiased max-w-2xl mb-40 flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
-          <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
-            <Navbar/>
-            {children}
-            <Analytics/>
-            <SpeedInsights/>
-            <BottomBar />
-          </main>
+        <main className="flex-auto min-w-0 mt-6 flex flex-col px-2 md:px-0">
+          <Navbar/>
+          {children}
+          <Analytics/>
+          <SpeedInsights/>
+        </main>
+        {/*<div className={"fixed bottom-0 left-0"}>*/}
+        {/*  <div className={'text-black dark:text-white'}>*/}
+        {/*  <Link href={'/uses'}>*/}
+        {/*    <Button className={'outline-0'}>*/}
+        {/*      <Image src={'/static/backpack.svg'} alt={'my backpack of gear'} width={20} height={20}/>*/}
+        {/*    </Button>*/}
+        {/*  </Link>*/}
+        {/*  </div>*/}
+        {/*</div>*/}
         </body>
       </CSPostHogProvider>
     </html>

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react";
-import Image from "next/image";
+import {Card, CardHeader, CardBody, CardFooter, Divider, Link, Image} from "@nextui-org/react";
 
 export default function Page() {
   return (
@@ -13,6 +13,6 @@ export default function Page() {
             <div className="prose prose-neutral dark:prose-invert">
                 <Image className={'rounded-2xl hover:scale-[1.05] duration-200'} src={'/static/selfies/daniel-on-amsterdam-stage.jpg'} alt={'me on stage'} width={200} height={200}/>
             </div>
-      </div>
+          </div>
   );
 }
