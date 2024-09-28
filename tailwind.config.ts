@@ -11,9 +11,17 @@ export default {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        typewriter: {
+          from: { width: '0' },
+          to: { width: '24em' }
+        },
+        caret: {
+          '50%': { borderColor: 'transparent' },
+        },
       },
       animation: {
         fadeIn: 'fadeIn 1s ease-in-out',
+        // caret: 'caret 2s steps(1) infinite',
       },
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
@@ -32,5 +40,16 @@ export default {
   future: {
     hoverOnlyWhenSupported: true,
   },
-  plugins: [typography],
+  plugins: [
+    typography,
+    function({ addUtilities }) {
+      const newUtilities = {
+        '.flashing-caret': {
+          'border-right': '1.5px solid',
+          'padding-right': '2px',
+        },
+      }
+      addUtilities(newUtilities, ['responsive', 'hover'])
+    }
+  ],
 } satisfies Config;
