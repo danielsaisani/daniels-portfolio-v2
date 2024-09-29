@@ -78,6 +78,7 @@ export default function RootLayout({
           <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
           <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
           <link rel="manifest" href="/img/site.webmanifest" />
+          <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22white%22/><svg x=%2210%22 y=%2210%22 width=%2280%22 height=%2280%22><image href=%22/path/to/your/favicon.ico%22 height=%2280%22 width=%2280%22/></svg></svg>" type="image/svg+xml"></link>
           <SandpackCSS />
         </head>
         <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">

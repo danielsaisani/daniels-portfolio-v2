@@ -104,9 +104,9 @@ export default function Blog({ params }) {
             dateModified: post.metadata.publishedAt,
             description: post.metadata.summary,
             image: post.metadata.image
-              ? `https://beta.danielsaisani.com${post.metadata.image}`
-              : `https://beta.danielsaisani.com/og?title=${post.metadata.title}`,
-            url: `https://beta.danielsaisani.com/blog/${post.slug}`,
+              ? `https://danielsaisani.com${post.metadata.image}`
+              : `https://danielsaisani.com/og?title=${post.metadata.title}`,
+            url: `https://danielsaisani.com/blog/${post.slug}`,
             author: {
               '@type': 'Person',
               name: 'Daniel Saisani',
