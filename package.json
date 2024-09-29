@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
-    "build": "npm run setup && next build",
+    "build": "npm run setup && npm install --legacy-peer-deps && next build",
     "build-only": "next build",
     "start": "next start",
     "setup": "node ./setup.mjs"
