@@ -6,6 +6,13 @@ export default {
   darkMode: "class",
   theme: {
     extend: {
+      colors: {
+        dark: "#191516",
+        light: "#E6E8E6",
+        primary: "#512888",
+        secondary: "#062A77",
+        tertiary: "#B11225"
+      },
       keyframes: {
         fadeIn: {
           '0%': { opacity: '0' },
@@ -26,7 +33,10 @@ export default {
       fontFamily: {
         sans: ['var(--font-geist-sans)'],
         mono: ['var(--font-geist-mono)'],
+        'poppins': ['Poppins']
+
       },
+      
       typography: {
         quoteless: {
           css: {
@@ -42,7 +52,7 @@ export default {
   },
   plugins: [
     typography,
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.flashing-caret': {
           'border-right': '1.5px solid',

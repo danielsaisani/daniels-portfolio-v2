@@ -1,24 +1,59 @@
-"use client";
+"use client"
 
-import Link from "next/link";
-import { Button } from "@nextui-org/button";
-import * as process from "node:process";
+import Link from 'next/link';
 import Image from "next/image";
-import { usePathname } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
-export default function BottomBar() {
-    const pathname = usePathname();
-    const isBlogPage = pathname.startsWith('/blog');
+const socialLinks = [
+  { key: 'instagram', href: 'https://www.instagram.com/dxnielks.io/', icon: '/instagram.svg', width: 36, height: 36 },
+  { key: 'tiktok', href: 'https://www.tiktok.com/@dks', icon: '/tiktok.svg', width: 30, height: 30 },
+//   { key: 'twitter', href: 'https://www.tiktok.com/@dks', icon: '/twitter.svg', width: 36, height: 36 },
+//   { key: 'github', href: 'https://www.tiktok.com/@dks', icon: '/github.svg', width: 36, height: 36 },
+//   { key: 'linkedin', href: 'https://www.tiktok.com/@dks', icon: '/linkedin.svg', width: 36, height: 36 },
 
-    if (isBlogPage) {
-        return null;
-    }
+];
 
-    return (
-                <Link href={'/uses'}>
-                    <Button className={'outline-0'}>
-                        <Image src={'/static/backpack.svg'} alt={'my backpack of gear'} width={20} height={20} />
-                    </Button>
-                </Link>
-    );
+export function BottomBar() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollBottom = scrollTop + windowHeight;
+
+      // Show footer when near the bottom of the page
+      setVisible(documentHeight - scrollBottom < 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <footer className={`
+      tracking-tight bg-[#0B090A] fixed bottom-0 left-0 right-0
+      transition-transform duration-300 ease-in-out
+      ${visible ? 'translate-y-0' : 'translate-y-full'}
+    `}>
+      <div className={'p-2'}>
+        <div className="flex justify-center items-center h-[5rem] px-2">
+          <div className={'flex items-center gap-4 space-x-0'}>
+            {socialLinks.map(({ key, href, icon, width, height }) => (
+              <Link
+                key={key}
+                href={href}
+                target={'_blank'}
+                rel="noopener noreferrer"
+                className="py-1 px-2 hover:-translate-y-1 duration-300"
+              >
+                <Image src={icon} alt={key} width={width} height={height} />
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
 }

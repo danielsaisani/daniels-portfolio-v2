@@ -32,8 +32,8 @@ export default function BlogPage() {
             className="flex flex-col space-y-1 mb-4"
             href={`/blog/${post.slug}`}
           >
-            <div className="w-full flex flex-col hover:bg-gray-100 hover:bg-opacity-15 duration-200 rounded-md p-2">
-              <p className="text-neutral-900 dark:text-neutral-100 tracking-tight">
+            <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
+              <p className="dark:text-neutral-100 tracking-tight">
                 {post.metadata.title}
               </p>
               <Suspense fallback={<p className="h-6" />}>
