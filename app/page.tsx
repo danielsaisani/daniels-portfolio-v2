@@ -63,14 +63,14 @@ export default function Page() {
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-1">
           <Image
-            className={'rounded-2xl hover:shadow-[0_5px_0_0] hover:shadow-[#512888] hover:-translate-y-2 shadow-none duration-300'}
+            className={'rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300'}
             src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
             alt={'me on stage'}
-            width={1000}
-            height={200}
+            width={340}
+            height={280}
           />
         </div>
-        <div className="flex items-center justify-center col-span-2 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300">
+        <div className="flex items-center justify-center col-span-2 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300">
           <LottieAnimation width={100} height={100} />
         </div>
         <div className="flex items-center justify-center col-span-3 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[10rem]">
