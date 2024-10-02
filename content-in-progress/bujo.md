@@ -1,0 +1,3 @@
+# Bullet Journalling
+
+The digital is an exert from the analogue, comp sci is fundamentally the abstraction and decomposition of real life problems. The problem is who decides what’s important for your productivity app? BUJO is structure and also the full and customisable system you can amke for uiursslf to run ur life. After all, there’s too much friction to include every intricacy and detail that may or may not be necessary to ur life in just an app, GO ANALOGUE
