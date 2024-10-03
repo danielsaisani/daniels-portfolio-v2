@@ -3,7 +3,7 @@ import { Suspense } from 'react';
 import ViewCounter from './view-counter';
 import { getViewsCount } from 'app/db/queries';
 import { getBlogPosts, getInProgressBlogPosts } from 'app/db/blog';
-import { LottieAnimation } from 'app/page';
+import { LottieAnimation } from 'app/components/Lottie';
 
 export const metadata = {
   title: 'Blog',
