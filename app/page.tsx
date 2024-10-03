@@ -5,14 +5,22 @@ import { Card, Image } from "@nextui-org/react";
 
 import Lottie from 'lottie-react';
 
-const LottieAnimation = ({ width, height }) => {
+export const LottieAnimation = ({ width, height, type }) => {
   const [animationData, setAnimationData] = useState(null);
 
   useEffect(() => {
-    fetch('/construction.json')
-      .then(response => response.json())
-      .then(data => setAnimationData(data))
-      .catch(error => console.error('Error loading Lottie animation:', error));
+    if (type == 'writing') {
+      fetch('/writing.json')
+        .then(response => response.json())
+        .then(data => setAnimationData(data))
+        .catch(error => console.error('Error loading Lottie animation:', error));
+    }
+    else {
+      fetch('/construction.json')
+        .then(response => response.json())
+        .then(data => setAnimationData(data))
+        .catch(error => console.error('Error loading Lottie animation:', error));
+    }
   }, []);
 
   if (!animationData) {
@@ -71,19 +79,19 @@ export default function Page() {
           />
         </div>
         <div className="flex items-center justify-center col-span-2 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300">
-          <LottieAnimation width={100} height={100} />
+          <LottieAnimation width={100} height={100} type={'building'}/>
         </div>
         <div className="flex items-center justify-center col-span-3 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[10rem]">
-          <LottieAnimation width={100} height={100} />
+          <LottieAnimation width={100} height={100} type={'building'}/>
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} />
+          <LottieAnimation width={100} height={100} type={'building'}/>
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} />
+          <LottieAnimation width={100} height={100} type={'building'}/>
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} />
+          <LottieAnimation width={100} height={100} type={'building'}/>
         </div>
       </div>
     </div>

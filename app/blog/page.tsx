@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import ViewCounter from './view-counter';
 import { getViewsCount } from 'app/db/queries';
-import { getBlogPosts } from 'app/db/blog';
+import { getBlogPosts, getInProgressBlogPosts } from 'app/db/blog';
+import { LottieAnimation } from 'app/page';
 
 export const metadata = {
   title: 'Blog',
@@ -11,6 +12,9 @@ export const metadata = {
 
 export default function BlogPage() {
   let allBlogs = getBlogPosts();
+  let allUnfinishedBlogs = getInProgressBlogPosts()
+
+  console.log(allUnfinishedBlogs)
 
   return (
     <section className={'animate-fadeIn'}>
@@ -38,6 +42,30 @@ export default function BlogPage() {
               </p>
               <Suspense fallback={<p className="h-6" />}>
                 <Views slug={post.slug} />
+              </Suspense>
+            </div>
+          </Link>
+        ))}
+      {allUnfinishedBlogs
+        .sort((a, b) => {
+          if (
+            new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
+          ) {
+            return -1;
+          }
+          return 1;
+        })
+        .map((post) => (
+          <Link
+            className="flex flex-col space-y-1 mb-4"
+            href={`/blog`}
+          >
+            <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
+              <p className="dark:text-neutral-100 tracking-tight">
+                {post.metadata.title}
+              </p>
+              <Suspense fallback={<p className="h-6" />}>
+                <LottieAnimation width={30} height={30} type={'writing'} />
               </Suspense>
             </div>
           </Link>
