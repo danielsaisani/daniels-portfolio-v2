@@ -34,30 +34,28 @@ export default function Page() {
       <p className="">
         full-stack software engineer, ex SWE @ YC W21 and comp sci grad @ King's College London
       </p>
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex items-center col-span-1 rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300">
           <Image
-            className={'rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300'}
+            className="rounded-2xl"
             src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
             alt={'me on stage'}
-            width={340}
-            height={280}
           />
         </div>
         <div className="flex items-center justify-center col-span-2 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300">
-          <LottieAnimation width={100} height={100} type={'building'}/>
+          <LottieAnimation width={100} height={100} type={'building'} />
         </div>
         <div className="flex items-center justify-center col-span-3 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[10rem]">
-          <LottieAnimation width={100} height={100} type={'building'}/>
+          <LottieAnimation width={100} height={100} type={'building'} />
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'}/>
+          <LottieAnimation width={100} height={100} type={'building'} />
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'}/>
+          <LottieAnimation width={100} height={100} type={'building'} />
         </div>
         <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'}/>
+          <LottieAnimation width={100} height={100} type={'building'} />
         </div>
       </div>
     </div>

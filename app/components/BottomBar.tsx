@@ -7,9 +7,9 @@ import { useState, useEffect } from 'react';
 const socialLinks = [
   { key: 'instagram', href: 'https://www.instagram.com/dxnielks.io/', icon: '/instagram.svg', width: 36, height: 36 },
   { key: 'tiktok', href: 'https://www.tiktok.com/@dks', icon: '/tiktok.svg', width: 30, height: 30 },
-//   { key: 'twitter', href: 'https://www.tiktok.com/@dks', icon: '/twitter.svg', width: 36, height: 36 },
-//   { key: 'github', href: 'https://www.tiktok.com/@dks', icon: '/github.svg', width: 36, height: 36 },
-//   { key: 'linkedin', href: 'https://www.tiktok.com/@dks', icon: '/linkedin.svg', width: 36, height: 36 },
+  //   { key: 'twitter', href: 'https://www.tiktok.com/@dks', icon: '/twitter.svg', width: 36, height: 36 },
+  //   { key: 'github', href: 'https://www.tiktok.com/@dks', icon: '/github.svg', width: 36, height: 36 },
+  //   { key: 'linkedin', href: 'https://www.tiktok.com/@dks', icon: '/linkedin.svg', width: 36, height: 36 },
 
 ];
 
@@ -33,7 +33,7 @@ export function BottomBar() {
 
   return (
     <footer className={`
-      tracking-tight bg-[#0B090A] fixed bottom-0 left-0 right-0
+      tracking-tight bg-dark fixed bottom-0 left-0 right-0
       transition-transform duration-300 ease-in-out
       ${visible ? 'translate-y-0' : 'translate-y-full'}
     `}>
