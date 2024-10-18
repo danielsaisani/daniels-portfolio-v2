@@ -54,7 +54,7 @@ export function Navbar() {
         className={`
           overflow-hidden transition-all duration-300 ease-in-out
           md:h-auto md:opacity-100
-          ${mobileOpen ? '' : 'h-0'}
+          ${mobileOpen ? 'h-64' : 'h-0'}
         `}
       >
         <div className={`
