@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from "next/image";
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 const socialLinks = [
   { key: 'instagram', href: 'https://www.instagram.com/dxnielks.io/', icon: '/instagram.svg', width: 36, height: 36 },
@@ -14,6 +15,7 @@ const socialLinks = [
 ];
 
 export function BottomBar() {
+  const currentPage = usePathname();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -33,6 +35,7 @@ export function BottomBar() {
 
   return (
     <footer className={`
+      ${currentPage.startsWith('/blog') ? "hidden" : ""}
       tracking-tight bg-dark fixed bottom-0 left-0 right-0
       transition-transform duration-300 ease-in-out
       ${visible ? 'translate-y-0' : 'translate-y-full'}

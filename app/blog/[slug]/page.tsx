@@ -90,7 +90,7 @@ export default function Blog({ params }) {
   }
 
   return (
-    <section className='h-[100rem]'>
+    <section>
       <script
         type="application/ld+json"
         suppressHydrationWarning
@@ -129,7 +129,7 @@ export default function Blog({ params }) {
         </Suspense>
       </div>
       {/* prose prose-quoteless prose-neutral dark:prose-invert */}
-      <article className="">
+      <article className="pb-20">
         <CustomMDX source={post.content} />
       </article>
     </section>
