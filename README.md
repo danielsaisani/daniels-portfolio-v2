@@ -31,15 +31,3 @@ CREATE TABLE views (
   slug VARCHAR(255) PRIMARY KEY,
   count INT NOT NULL
 );
-```
-
-``` mdx
----
-publishedAt: '2024/05/04'
-title: Hello there! o.O
----
-
-Hey there :)
-
-I'm very excited to introduce my blog.
-```
