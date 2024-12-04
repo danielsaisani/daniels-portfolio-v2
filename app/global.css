@@ -202,3 +202,9 @@ h4 {
   margin-top: 1.25em !important;
   margin-bottom: 1.25em !important;
 }
+
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
