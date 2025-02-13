@@ -1,4 +1,4 @@
-import { auth } from 'app/auth';
+import { auth } from '@/app/auth';
 import { getGuestbookEntries } from 'app/db/queries';
 import { SignIn, SignOut } from './buttons';
 import { Suspense } from 'react';

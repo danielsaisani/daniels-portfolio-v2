@@ -28,7 +28,7 @@ export const LottieAnimation = ({ width, height, type }: LottieAnimationProps) =
   }, []);
 
   if (!animationData) {
-    return <div>Loading animation...</div>;
+    return null
   }
 
   return (

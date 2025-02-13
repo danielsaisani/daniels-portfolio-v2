@@ -9,6 +9,7 @@ if (typeof window !== 'undefined') {
     disable_session_recording: false
   })
 }
+
 export function CSPostHogProvider({ children }) {
     return <PostHogProvider client={posthog}>{children}</PostHogProvider>
 }

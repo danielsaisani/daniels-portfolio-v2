@@ -9,9 +9,9 @@ const navItems = {
   '/': {
     name: 'home',
   },
-  '/work': {
-    name: 'work',
-  },
+  // '/work': {
+  //   name: 'work',
+  // },
   '/blog': {
     name: 'blog',
   },
@@ -68,7 +68,7 @@ export function Navbar() {
               <Link
                 key={path}
                 href={path}
-                className={`${path === currentPage ? 'font-extrabold' : 'font-light'} duration-300 transition-all hover:-translate-y-1 dark:hover:text-neutral-200 flex align-middle relative py-1 px-2`}
+                className={`${path === currentPage ? 'font-bold' : 'font-light'} duration-300 transition-all hover:-translate-y-1 dark:hover:text-neutral-200 flex align-middle relative py-1 px-2`}
                 onClick={() => setMobileOpen(false)}
               >
                 {name}

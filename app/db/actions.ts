@@ -1,6 +1,6 @@
 'use server';
 
-import { auth } from 'app/auth';
+import { auth } from '@/app/api/auth/[...nextauth]/options';
 import { type Session } from 'next-auth';
 import { sql } from './postgres';
 import { revalidatePath, unstable_noStore as noStore } from 'next/cache';
