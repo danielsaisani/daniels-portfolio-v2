@@ -1,4 +1,4 @@
-import { auth } from '@/app/api/auth/[...nextauth]/options';
+import { auth } from '@/app/auth';
 import { getGuestbookEntries } from 'app/db/queries';
 import { redirect } from 'next/navigation';
 import Form from './form';

@@ -1,12 +1,12 @@
 interface ClickyCardProps {
-    children: React.ReactNode
+    children?: React.ReactNode
     type: "primary" | "secondary" | "tertiary"
 }
 
-export const ClickyCard = ({ children, type }) => {
+export const ClickyCard = ({ children, type }: ClickyCardProps) => {
 
     return (
-        <div className={`flex items-center rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-${type} hover:-translate-y-2 shadow-none duration-300`}>
+        <div className={`flex items-center rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-${type} hover:-translate-y-2 shadow-none duration-300 bg-light`}>
             {children}
         </div>
     )
