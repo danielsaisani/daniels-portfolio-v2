@@ -50,7 +50,7 @@ export function Navbar() {
           alt='menu'
         />
       </div>
-      <div 
+      <div
         className={`
           overflow-hidden transition-all duration-300 ease-in-out
           md:h-auto md:opacity-100

@@ -1,7 +1,5 @@
 import './global.css';
 import type { Metadata } from 'next';
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
 import { Poppins } from 'next/font/google';
 import { Navbar } from './components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
@@ -9,9 +7,6 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
 import { CSPostHogProvider } from './providers';
 import { BottomBar } from "./components/ui/bottom-bar";
-import Link from "next/link";
-import { Button } from "@nextui-org/button";
-import Image from "next/image";
 
 const inter = Poppins({
   subsets: ["latin"],

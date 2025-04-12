@@ -1,15 +1,14 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Card, Image, Link } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 import { LottieAnimation } from "./components/ui/lottie";
-import Project from "./components/ui/project";
-import { ClickyCard } from "./components/ui/clicky-card";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 export default function Page() {
   const [displayedText, setDisplayedText] = useState('');
-  const [typingSpeed1] = useState(50);
+  const [typingSpeed1] = useState(20);
   const [typingSpeed2] = useState(20);
   const [text] = useState("hello hello! I'm Daniel 👾");
   const [fullStackText, setFullStackDisplayedText] = useState('');
@@ -58,30 +57,69 @@ export default function Page() {
           }}
         ></span>
       </p>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="flex items-center col-span-1 rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300">
-          <Image
-            className="rounded-2xl"
-            src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
-            alt={'me on stage'}
-          />
-        </div>
-        <div className="flex items-center justify-center col-span-2 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300">
-          <LottieAnimation width={100} height={100} type={'building'} />
-        </div>
-        <div className="flex items-center justify-center col-span-3 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[10rem]">
-          <LottieAnimation width={100} height={100} type={'building'} />
-        </div>
-        <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-primary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'} />
-        </div>
-        <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-secondary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'} />
-        </div>
-        <div className="flex items-center justify-center col-span-1 bg-light rounded-2xl hover:shadow-[0_10px_0_0] hover:shadow-tertiary hover:-translate-y-2 shadow-none duration-300 h-[14rem]">
-          <LottieAnimation width={100} height={100} type={'building'} />
-        </div>
-      </div>
+      <AnimatePresence>
+        {isFullStackTypingComplete && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-10">
+          <motion.div
+            key={1}
+            style={{ position: "relative" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+            className="flex items-center col-span-1 rounded-2xl">
+            <Image
+              className="rounded-2xl"
+              src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
+              alt={'me on stage'}
+            />
+          </motion.div>
+          <motion.div
+            key={2}
+            style={{ position: "relative" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+            className="flex items-center justify-center col-span-2 bg-light rounded-2xl">
+            <LottieAnimation width={100} height={100} type={'building'} />
+          </motion.div>
+          <motion.div
+            key={3}
+            style={{ position: "relative" }}
+
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+            className="flex items-center justify-center col-span-3 bg-light rounded-2xl h-[10rem]">
+            <LottieAnimation width={100} height={100} type={'building'} />
+          </motion.div>
+          <motion.div
+            key={4}
+            style={{ position: "relative" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+            <LottieAnimation width={100} height={100} type={'building'} />
+          </motion.div>
+          <motion.div
+            key={5}
+            style={{ position: "relative" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
+            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+            <LottieAnimation width={100} height={100} type={'building'} />
+          </motion.div>
+          <motion.div
+            key={6}
+            style={{ position: "relative" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.5, ease: "easeOut" }}
+            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+            <LottieAnimation width={100} height={100} type={'building'} />
+          </motion.div>
+        </div>}
+      </AnimatePresence>
     </div>
   );
 }

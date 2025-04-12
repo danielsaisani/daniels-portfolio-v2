@@ -11,10 +11,9 @@ export const metadata = {
 };
 
 export default function BlogPage() {
-  let allBlogs = getBlogPosts();
-  let allUnfinishedBlogs = getInProgressBlogPosts()
 
-  console.log(allUnfinishedBlogs)
+  const allBlogs = getBlogPosts();
+  const allUnfinishedBlogs = getInProgressBlogPosts()
 
   return (
     <section className={'animate-fadeIn'}>
