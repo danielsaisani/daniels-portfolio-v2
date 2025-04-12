@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest } from 'next/server'
 import { z } from 'zod'
 
 const BlogServerApiResponseSchema = z.object({
@@ -15,7 +15,7 @@ const BlogServerApiResponseSchema = z.object({
     ).nullable()
 })
 
-export async function GET(request: NextApiRequest) {
+export async function GET(request: NextRequest) {
 
     const blogsResponse = await fetch(`${process.env.STRAPI_URL}/articles`, {
         headers: {
