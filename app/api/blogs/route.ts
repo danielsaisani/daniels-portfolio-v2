@@ -24,18 +24,31 @@ const BlogServerApiBlogResponseSchema = z.object({
         slug: z.string().nullable(),
         publishedAt: z.string(),
         updatedAt: z.string(),
+        author: z.object({
+            name: z.string()
+        }),
+        blocks: z.array(
+            z.object({
+                id: z.number(),
+                body: z.string(),
+            })
+        )
     }).nullable()
 })
 
 export async function GET(request: NextRequest) {
 
-    const params = request.nextUrl.searchParams
+    let params = request.nextUrl.searchParams
 
     const blogId = params.get('documentId') ? params.get('documentId') : ""
 
+    if (blogId) {
+        params.append('populate', '*')
+    }
+
     console.log(`Received request with params: ${params.toString()}`)
 
-    const blogServerResponse = await fetch(`${process.env.STRAPI_URL}/articles/${blogId}`, {
+    const blogServerResponse = await fetch(`${process.env.STRAPI_URL}/articles/${blogId}?${params.toString()}`, {
         headers: {
             'Authorization': `Bearer ${process.env.STRAPI_API_KEY}`,
         },
@@ -45,7 +58,7 @@ export async function GET(request: NextRequest) {
 
     console.log(`API Response : ${JSON.stringify(blogData)}`)
 
-    const response = blogId ? BlogServerApiBlogResponseSchema.parse(blogData) : BlogServerApiBlogsResponseSchema.parse(blogData) 
+    const response = blogId ? BlogServerApiBlogResponseSchema.parse(blogData) : BlogServerApiBlogsResponseSchema.parse(blogData)
 
     return Response.json({ response })
 
