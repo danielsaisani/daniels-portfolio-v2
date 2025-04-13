@@ -57,69 +57,70 @@ export default function Page() {
           }}
         ></span>
       </p>
-      <AnimatePresence>
-        {isFullStackTypingComplete && <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-10">
-          <motion.div
-            key={1}
-            style={{ position: "relative" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-            className="flex items-center col-span-1 rounded-2xl">
-            <Image
-              className="rounded-2xl"
-              src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
-              alt={'me on stage'}
-            />
-          </motion.div>
-          <motion.div
-            key={2}
-            style={{ position: "relative" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
-            className="flex items-center justify-center col-span-2 bg-light rounded-2xl">
-            <LottieAnimation width={100} height={100} type={'building'} />
-          </motion.div>
-          <motion.div
-            key={3}
-            style={{ position: "relative" }}
+      {isFullStackTypingComplete &&
+        <AnimatePresence>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-10">
+            <motion.div
+              key={1}
+              style={{ position: "relative" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center col-span-1 rounded-2xl">
+              <Image
+                className="rounded-2xl"
+                src={'/static/selfies/daniel-on-amsterdam-stage.jpg'}
+                alt={'me on stage'}
+              />
+            </motion.div>
+            <motion.div
+              key={2}
+              style={{ position: "relative" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5, ease: "easeOut" }}
+              className="flex items-center justify-center col-span-2 bg-light rounded-2xl">
+              <LottieAnimation width={100} height={100} type={'building'} />
+            </motion.div>
+            <motion.div
+              key={3}
+              style={{ position: "relative" }}
 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
-            className="flex items-center justify-center col-span-3 bg-light rounded-2xl h-[10rem]">
-            <LottieAnimation width={100} height={100} type={'building'} />
-          </motion.div>
-          <motion.div
-            key={4}
-            style={{ position: "relative" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
-            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
-            <LottieAnimation width={100} height={100} type={'building'} />
-          </motion.div>
-          <motion.div
-            key={5}
-            style={{ position: "relative" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
-            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
-            <LottieAnimation width={100} height={100} type={'building'} />
-          </motion.div>
-          <motion.div
-            key={6}
-            style={{ position: "relative" }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 0.5, ease: "easeOut" }}
-            className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
-            <LottieAnimation width={100} height={100} type={'building'} />
-          </motion.div>
-        </div>}
-      </AnimatePresence>
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5, ease: "easeOut" }}
+              className="flex items-center justify-center col-span-3 bg-light rounded-2xl h-[10rem]">
+              <LottieAnimation width={100} height={100} type={'building'} />
+            </motion.div>
+            <motion.div
+              key={4}
+              style={{ position: "relative" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5, ease: "easeOut" }}
+              className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+              <LottieAnimation width={100} height={100} type={'building'} />
+            </motion.div>
+            <motion.div
+              key={5}
+              style={{ position: "relative" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5, ease: "easeOut" }}
+              className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+              <LottieAnimation width={100} height={100} type={'building'} />
+            </motion.div>
+            <motion.div
+              key={6}
+              style={{ position: "relative" }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1, duration: 0.5, ease: "easeOut" }}
+              className="flex items-center justify-center col-span-1 bg-light rounded-2xl h-[14rem]">
+              <LottieAnimation width={100} height={100} type={'building'} />
+            </motion.div>
+          </div>
+        </AnimatePresence>}
     </div>
   );
 }
