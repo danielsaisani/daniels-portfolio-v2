@@ -3,7 +3,7 @@ import { Suspense, cache } from 'react';
 import { notFound } from 'next/navigation';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import { getViewsCount } from 'app/db/queries';
-import { getBlogPosts } from 'app/db/blog';
+import { getBlogPosts, getBlogPost } from 'app/db/blog';
 import ViewCounter from '../view-counter';
 import { increment } from 'app/db/actions';
 import { unstable_noStore as noStore } from 'next/cache';
@@ -11,7 +11,8 @@ import { unstable_noStore as noStore } from 'next/cache';
 export async function generateMetadata({
   params,
 }): Promise<Metadata | undefined> {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+  const post = await getBlogPost(params.slug);
+
   if (!post) {
     return;
   }
@@ -19,33 +20,34 @@ export async function generateMetadata({
   let {
     title,
     publishedAt: publishedTime,
-    summary: description,
-    image,
-  } = post.metadata;
-  let ogImage = image
-    ? `https://danielsaisani.com${image}`
-    : `https://danielsaisani.com/og?title=${title}`;
+    // summary: description,
+    // image,
+  } = { ...post };
+
+  // let ogImage = image
+  //   ? `https://danielsaisani.com${image}`
+  //   : `https://danielsaisani.com/og?title=${title}`;
 
   return {
     title,
-    description,
+    // description,
     openGraph: {
       title,
-      description,
+      // description,
       type: 'article',
       publishedTime,
       url: `https://danielsaisani.com/blog/${post.slug}`,
-      images: [
-        {
-          url: ogImage,
-        },
-      ],
+      // images: [
+      //   {
+      //     url: ogImage,
+      //   },
+      // ],
     },
     twitter: {
       card: 'summary_large_image',
       title,
-      description,
-      images: [ogImage],
+      // description,
+      // images: [ogImage],
     },
   };
 }
@@ -82,8 +84,13 @@ function formatDate(date: string) {
   }
 }
 
-export default function Blog({ params }) {
-  let post = getBlogPosts().find((post) => post.slug === params.slug);
+export default async function Blog({ params }) {
+
+  const posts = await getBlogPosts()
+
+  const blog = posts.find(post => post.slug === params.slug)
+
+  const post = (await getBlogPost(blog?.blogId));
 
   if (!post) {
     notFound();
@@ -98,13 +105,13 @@ export default function Blog({ params }) {
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'BlogPosting',
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `https://danielsaisani.com${post.metadata.image}`
-              : `https://danielsaisani.com/og?title=${post.metadata.title}`,
+            headline: post.title,
+            datePublished: post.publishedAt,
+            dateModified: post.publishedAt,
+            description: post.title,
+            image: post.title
+              ? `https://danielsaisani.com${post.title}`
+              : `https://danielsaisani.com/og?title=${post.title}`,
             url: `https://danielsaisani.com/blog/${post.slug}`,
             author: {
               '@type': 'Person',
@@ -114,23 +121,20 @@ export default function Blog({ params }) {
         }}
       />
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
-        {post.metadata.title}
+        {post.title}
       </h1>
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
         <Suspense fallback={<p className="h-5" />}>
           <p className="text-sm">
-            {/* {post.metadata.publishedAt}
-            {new Date(post.metadata.publishedAt).toISOString()} */}
-            {formatDate(post.metadata.publishedAt)}
+            {formatDate(post.publishedAt)}
           </p>
         </Suspense>
         <Suspense fallback={<p className="h-5" />}>
           <Views slug={post.slug} />
         </Suspense>
       </div>
-      {/* prose prose-quoteless prose-neutral dark:prose-invert */}
       <article className="pb-20">
-        <CustomMDX source={post.content} />
+        <CustomMDX source={post.blocks[0].body} />
       </article>
     </section>
   );

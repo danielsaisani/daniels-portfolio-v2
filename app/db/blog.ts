@@ -13,7 +13,18 @@ type Blog = {
   author: { name: string };
   publishedAt: string;
   updatedAt: string;
-  blocks: { body: string }[] | null;
+  blocks: { body: string }[];
+  title: string
+}
+
+type BlogMetaData = {
+  id: number;
+  documentId: string;
+  slug: string;
+  description: string | null;
+  author: { name: string };
+  publishedAt: string;
+  updatedAt: string;
   title: string
 }
 
@@ -37,7 +48,7 @@ type UnpublishedBlogsResponse = {
 
 type BlogsResponse = {
   response: {
-    data: Blog[]
+    data: BlogMetaData[]
   }
 }
 
@@ -54,22 +65,18 @@ function extractTweetIds(content) {
   return tweetMatches?.map((tweet) => tweet.match(/[0-9]+/g)[0]) || [];
 }
 
-function parseFrontmatter(fileContent: string) {
-  let frontmatterRegex = /---\s*([\s\S]*?)\s*---/;
-  let match = frontmatterRegex.exec(fileContent);
-  let frontMatterBlock = match![1];
-  let content = fileContent.replace(frontmatterRegex, '').trim();
-  let frontMatterLines = frontMatterBlock.trim().split('\n');
-  let metadata: Partial<Metadata> = {};
+async function getBlog(blogId) {
+  let params = new URLSearchParams({
+    documentId: blogId,
+  })
 
-  frontMatterLines.forEach((line) => {
-    let [key, ...valueArr] = line.split(': ');
-    let value = valueArr.join(': ').trim();
-    value = value.replace(/^['"](.*)['"]$/, '$1'); // Remove quotes
-    metadata[key.trim() as keyof Metadata] = value;
-  });
+  const blogResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs?${params.toString()}`)
 
-  return { metadata: metadata as Metadata, content };
+  const blogData = await blogResponse.json()
+
+  // console.log(`Response from NextJS backend: ${JSON.stringify(blogData, null, 2)}`)
+
+  return blogData as BlogResponse
 }
 
 async function getAllBlogs() {
@@ -87,13 +94,9 @@ async function getAllUnpublishedBlogs() {
 
   const blogsData = await allBlogsResponse.json()
 
-  console.log(`Response from NextJS backend: ${JSON.stringify(blogsData, null, 2)}`)
+  // console.log(`Response from NextJS backend: ${JSON.stringify(blogsData, null, 2)}`)
 
   return blogsData as UnpublishedBlogsResponse
-}
-
-function readMDXContent(rawContent) {
-  return parseFrontmatter(rawContent);
 }
 
 async function getAllUnpublishedBlogData() {
@@ -116,7 +119,7 @@ async function getAllUnpublishedBlogData() {
       documentId,
     };
   }).filter((blogObject) => {
-    return !blogObject.publishedAt && !publishedBlogObjects.response.data.map((blog)=>blog.documentId).includes(blogObject.documentId);
+    return !blogObject.publishedAt && !publishedBlogObjects.response.data.map((blog) => blog.documentId).includes(blogObject.documentId);
   });
 
   return data
@@ -137,11 +140,20 @@ async function getAllBlogData() {
     return {
       publishedAt,
       slug,
-      title
+      title,
+      blogId
     };
   });
 
   return data
+
+}
+
+async function getBlogData(blogId) {
+
+  let blogObject = await getBlog(blogId);
+
+  return blogObject.response.data
 
 }
 
@@ -153,4 +165,9 @@ export async function getBlogPosts() {
 export async function getUnpublishedBlogPosts() {
   const allUnpublishedBlogs = await getAllUnpublishedBlogData();
   return allUnpublishedBlogs
+}
+
+export async function getBlogPost(blogId) {
+  const blog = await getBlogData(blogId);
+  return blog
 }

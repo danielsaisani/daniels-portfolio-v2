@@ -13,7 +13,7 @@ export const metadata = {
 export default async function BlogPage() {
 
   const allBlogs = await getBlogPosts();
-  const allUnfinishedBlogs = await getUnpublishedBlogPosts();
+  const allBlogsComingSoon = await getUnpublishedBlogPosts();
 
   return (
     <section className={'animate-fadeIn'}>
@@ -45,7 +45,7 @@ export default async function BlogPage() {
             </div>
           </Link>
         ))}
-      {allUnfinishedBlogs
+      {allBlogsComingSoon
         .map((post) => (
           <Link
             className="flex flex-col space-y-1 mb-4"

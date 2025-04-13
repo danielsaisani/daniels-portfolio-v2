@@ -1,9 +1,9 @@
 import { getBlogPosts } from 'app/db/blog';
 
 export default async function sitemap() {
-  let blogs = getBlogPosts().map((post) => ({
+  let blogs = (await getBlogPosts()).map((post) => ({
     url: `https://danielsaisani.com/blog/${post.slug}`,
-    lastModified: post.metadata.publishedAt,
+    lastModified: post.publishedAt,
   }));
 
   let routes = ['', '/blog', '/guestbook', '/uses', '/work'].map((route) => ({
