@@ -2,18 +2,18 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import ViewCounter from './view-counter';
 import { getViewsCount } from 'app/db/queries';
-import { getBlogPosts, getInProgressBlogPosts } from 'app/db/blog';
+import { getBlogPosts, getUnpublishedBlogPosts } from 'app/db/blog';
 import { LottieAnimation } from '@/app/components/ui/lottie';
 
 export const metadata = {
   title: 'Blog',
-  description: 'Read my thoughts on software development, productivity and more.',
+  description: 'DanielKS\'s thoughts on a plethora of subject matter, namely software engineering , personal growth, and more.',
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
 
-  const allBlogs = getBlogPosts();
-  const allUnfinishedBlogs = getInProgressBlogPosts()
+  const allBlogs = await getBlogPosts();
+  const allUnfinishedBlogs = await getUnpublishedBlogPosts();
 
   return (
     <section className={'animate-fadeIn'}>
@@ -23,7 +23,7 @@ export default function BlogPage() {
       {allBlogs
         .sort((a, b) => {
           if (
-            new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
+            new Date(a.publishedAt) > new Date(b.publishedAt)
           ) {
             return -1;
           }
@@ -37,7 +37,7 @@ export default function BlogPage() {
           >
             <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
               <p className="dark:text-neutral-100 tracking-tight">
-                {post.metadata.title}
+                {post.title}
               </p>
               <Suspense fallback={<p className="h-6" />}>
                 <Views slug={post.slug} />
@@ -46,14 +46,6 @@ export default function BlogPage() {
           </Link>
         ))}
       {allUnfinishedBlogs
-        .sort((a, b) => {
-          if (
-            new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)
-          ) {
-            return -1;
-          }
-          return 1;
-        })
         .map((post) => (
           <Link
             className="flex flex-col space-y-1 mb-4"
@@ -61,7 +53,7 @@ export default function BlogPage() {
           >
             <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
               <p className="dark:text-neutral-100 tracking-tight">
-                {post.metadata.title}
+                {post.title}
               </p>
               <Suspense fallback={<p className="h-6" />}>
                 <LottieAnimation width={30} height={30} type={'writing'} />
@@ -69,7 +61,7 @@ export default function BlogPage() {
             </div>
           </Link>
         ))}
-    </section>
+    </section >
   );
 }
 

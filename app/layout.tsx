@@ -14,7 +14,7 @@ const inter = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.BASE_URL!),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
   title: {
     default: 'Daniel Saisani',
     template: '%s | Daniel Saisani',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Daniel Saisani',
     description: 'Engineer, innovator, and content creator.',
-    url: process.env.BASE_URL,
+    url: process.env.NEXT_PUBLIC_BASE_URL,
     siteName: 'Daniel Saisani',
     locale: 'en_US',
     type: 'website',

@@ -8,8 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function Page() {
   const [displayedText, setDisplayedText] = useState('');
-  const [typingSpeed1] = useState(20);
-  const [typingSpeed2] = useState(20);
+  const [typingSpeed1] = useState(10);
+  const [typingSpeed2] = useState(10);
   const [text] = useState("hello hello! I'm Daniel 👾");
   const [fullStackText, setFullStackDisplayedText] = useState('');
   const [fullStackTextOriginal] = useState("full-stack software engineer, ex-SWE @ Terra YC W21 and comp sci grad @ King's College London");
