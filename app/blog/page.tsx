@@ -20,7 +20,7 @@ export default async function BlogPage() {
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
         my stories, opinions, projects and untamed thoughts all let loose onto a page
       </h1>
-      {allBlogs
+      {allBlogs && allBlogs
         .sort((a, b) => {
           if (
             new Date(a.publishedAt) > new Date(b.publishedAt)
@@ -45,7 +45,7 @@ export default async function BlogPage() {
             </div>
           </Link>
         ))}
-      {allBlogsComingSoon
+      {allBlogsComingSoon && allBlogsComingSoon
         .map((post) => (
           <Link
             className="flex flex-col space-y-1 mb-4"

@@ -7,9 +7,9 @@ export const sql = postgres(process.env.POSTGRES_URL, {ssl: !testing,});
 
 
 const nextConfig = {
-  experimental: {
-    ppr: false,
-  },
+  // experimental: {
+  //   ppr: false,
+  // },
   async redirects() {
     if (!process.env.POSTGRES_URL) {
       return [];

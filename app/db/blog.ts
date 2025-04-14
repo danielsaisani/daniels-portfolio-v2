@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 type Metadata = {
   title: string;
   publishedAt: string;
@@ -66,37 +68,71 @@ function extractTweetIds(content) {
 }
 
 async function getBlog(blogId) {
-  let params = new URLSearchParams({
-    documentId: blogId,
-  })
+  try {
+    let params = new URLSearchParams({
+      documentId: blogId,
+    })
+    // console.log(`URL: ${process.env.BASE_URL}/api/blogs/`)
+    // const blogResponse = await axios.get(`${process.env.BASE_URL}/api/blogs?${params.toString()}`)
+    const blogResponse = await axios.get(`https://danielsaisani.com/api/blogs?${params.toString()}`)
 
-  const blogResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs?${params.toString()}`)
 
-  const blogData = await blogResponse.json()
+    const blogData = await blogResponse.data
 
-  // console.log(`Response from NextJS backend: ${JSON.stringify(blogData, null, 2)}`)
+    // console.log(`Response from NextJS backend: ${JSON.stringify(blogData, null, 2)}`)
 
-  return blogData as BlogResponse
+    return blogData as BlogResponse
+  }
+  catch (error) {
+    console.error('Fetch failed:', error)
+    return {
+      response: {
+        data: null
+      }
+    }
+  }
 }
 
 async function getAllBlogs() {
-  const allBlogsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs/`)
 
-  const blogsData = await allBlogsResponse.json()
+  try {
+    // console.log(`URL: ${process.env.BASE_URL}/api/blogs/`)
+    // const allBlogsResponse = await fetch(`${process.env.BASE_URL}/api/blogs/`)
 
-  console.log(`Response from NextJS backend: ${JSON.stringify(blogsData, null, 2)}`)
+    const allBlogsResponse = await axios.get(`https://danielsaisani.com/api/blogs/`)
 
-  return blogsData as BlogsResponse
+    const blogsData = await allBlogsResponse.data
+    // console.log(`Response from NextJS backend: ${JSON.stringify(blogsData, null, 2)}`)
+    return blogsData as BlogsResponse
+  }
+  catch (error) {
+    console.error('Fetch failed:', error);
+    return {
+      response: {
+        data: []
+      }
+    }
+  }
+
+
+
 }
 
 async function getAllUnpublishedBlogs() {
-  const allBlogsResponse = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/blogs?status=draft`)
+  try {
+    // console.log(`URL: ${process.env.BASE_URL}/api/blogs?status=draft`)
+    // const allBlogsResponse = await axios.get(`${process.env.BASE_URL}/api/blogs?status=draft`);
+    const allBlogsResponse = await axios.get(`https://danielsaisani.com/api/blogs?status=draft`);
 
-  const blogsData = await allBlogsResponse.json()
-
-  // console.log(`Response from NextJS backend: ${JSON.stringify(blogsData, null, 2)}`)
-
-  return blogsData as UnpublishedBlogsResponse
+    return allBlogsResponse.data as UnpublishedBlogsResponse;
+  } catch (error) {
+    console.error('Fetch failed:', error);
+    return {
+      response: {
+        data: []
+      }
+    };
+  }
 }
 
 async function getAllUnpublishedBlogData() {
@@ -158,8 +194,13 @@ async function getBlogData(blogId) {
 }
 
 export async function getBlogPosts() {
-  const allBlogs = await getAllBlogData();
-  return allBlogs
+  try {
+    const allBlogs = await getAllBlogData();
+    return allBlogs
+  } catch (error) {
+    console.error(error);
+    return []
+  }
 }
 
 export async function getUnpublishedBlogPosts() {
