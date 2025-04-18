@@ -5,7 +5,6 @@ import { Navbar } from './components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
-import { CSPostHogProvider } from './providers';
 import { BottomBar } from "./components/ui/bottom-bar";
 
 const inter = Poppins({
@@ -66,35 +65,24 @@ export default function RootLayout({
         inter.className,
       )}
     >
-      <CSPostHogProvider>
-        <head>
-          <link rel="icon" href="/img/favicon.ico" sizes="any" />
-          <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
-          <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
-          <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
-          <link rel="manifest" href="/img/site.webmanifest" />
-          <SandpackCSS />
-        </head>
-        <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
-          <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 h-[100rem] gap-20">
-            <Navbar />
-            {children}
-            <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
-            <Analytics />
-            <SpeedInsights />
-            <BottomBar />
-          </main>
-          {/*<div className={"fixed bottom-0 left-0"}>*/}
-          {/*  <div className={'text-black dark:text-white'}>*/}
-          {/*  <Link href={'/uses'}>*/}
-          {/*    <Button className={'outline-0'}>*/}
-          {/*      <Image src={'/static/backpack.svg'} alt={'my backpack of gear'} width={20} height={20}/>*/}
-          {/*    </Button>*/}
-          {/*  </Link>*/}
-          {/*  </div>*/}
-          {/*</div>*/}
-        </body>
-      </CSPostHogProvider>
+      <head>
+        <link rel="icon" href="/img/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
+        <link rel="manifest" href="/img/site.webmanifest" />
+        <SandpackCSS />
+      </head>
+      <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
+        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 h-[100rem] gap-20">
+          <Navbar />
+          {children}
+          <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
+          <Analytics />
+          <SpeedInsights />
+          <BottomBar />
+        </main>
+      </body>
     </html>
   );
 }
