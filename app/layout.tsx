@@ -71,6 +71,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
         <link rel="manifest" href="/img/site.webmanifest" />
+        <meta name="image" property="og:image" content="https://www.danielsaisani.com/opengraph-image.png"></meta>
         <SandpackCSS />
       </head>
       <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
