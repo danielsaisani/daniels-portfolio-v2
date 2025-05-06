@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     siteName: 'Daniel Saisani',
     locale: 'en_US',
     type: 'website',
-    images: ['https://www.danielsaisani.com/opengraph-image.png'],
+    images: ['https://www.danielsaisani.com/opengraph-image-v2.png'],
   },
   robots: {
     index: true,
