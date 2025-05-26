@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/app/components/ui/skeleton';
-import ViewCounter from '@/app/blog/components/ViewCounter';
+import ViewCounter from './view-counter'; // Corrected import path
 // Assuming LottieAnimation is correctly pathed, adjust if necessary
 // import LottieAnimation from '@/app/components/LottieAnimation'; 
 // Assuming the path for your Lottie JSON, adjust if necessary
