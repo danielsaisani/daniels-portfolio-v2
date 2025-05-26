@@ -155,13 +155,13 @@ export default function BlogList({ allViews }: BlogListProps) {
       {posts.length > 0 ? (
         <ul className="space-y-4">
           {posts.map((post) => (
-            <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+            <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 hover:text-dark dark:hover:bg-gray-800 transition-colors">
               <Link href={`/blog/${post.slug}`} className="block">
                 {/* Changed dark mode title color to white */}
-                <h3 className="text-xl font-semibold text-blue-600 dark:text-white hover:underline">{post.title}</h3>
+                <h3 className="text-xl font-semibold dark:text-white">{post.title}</h3>
                 {/* Changed dark mode secondary text color to gray-300 */}
                 <div className="text-sm text-gray-500 dark:text-gray-300 mt-1 flex justify-between items-center">
-                  <span>Published on: {new Date(post.publishedAt).toLocaleDateString()}</span>
+                  <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
                   {/* Ensure ViewCounter is only rendered for posts with a slug */}
                   {post.slug && (
                     <Suspense fallback={<div className="h-5 w-16 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
