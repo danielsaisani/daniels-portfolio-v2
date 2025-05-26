@@ -30,7 +30,18 @@ interface UpcomingPost extends ApiPost {
   // publishedAt could be null or a future date string
 }
 
-export default function BlogList() {
+// Define the structure for a single view count item
+interface ViewCount {
+  slug: string;
+  count: number;
+}
+
+// Define the props for BlogList component
+interface BlogListProps {
+  allViews: ViewCount[];
+}
+
+export default function BlogList({ allViews }: BlogListProps) {
   const [posts, setPosts] = useState<PublishedPost[]>([]);
   const [comingSoonPosts, setComingSoonPosts] = useState<UpcomingPost[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -119,7 +130,8 @@ export default function BlogList() {
                   {/* Ensure ViewCounter is only rendered for posts with a slug */}
                   {post.slug && (
                     <Suspense fallback={<div className="h-5 w-16 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
-                      <ViewCounter slug={post.slug} />
+                      {/* Pass allViews to ViewCounter */}
+                      <ViewCounter slug={post.slug} allViews={allViews} />
                     </Suspense>
                   )}
                 </div>
