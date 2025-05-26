@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import ViewCounter from './view-counter'; // Corrected import path
-// Assuming LottieAnimation is correctly pathed, adjust if necessary
-// import LottieAnimation from '@/app/components/LottieAnimation'; 
+import { LottieAnimation } from '@/app/components/ui/lottie'; // Added LottieAnimation import
 // Assuming the path for your Lottie JSON, adjust if necessary
 // import animationData from '@/public/lottie/blog-animation.json'; 
 
@@ -97,14 +96,16 @@ export default function BlogList({ allViews }: BlogListProps) {
     return (
       <div className="space-y-4">
         {[...Array(3)].map((_, i) => (
-          // Mimic the structure of a loaded list item (<li>)
+          // Container for each skeleton item. No animate-pulse here.
           <div key={i} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
-            {/* Title Skeleton */}
-            <Skeleton className="h-6 w-3/4 mb-3" /> 
+            {/* Title Skeleton: Added rounded-lg, opacity-75, and specific bg colors */}
+            <Skeleton className="h-6 w-3/4 mb-3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
             {/* Metadata Line Skeleton (Date + ViewCounter) */}
             <div className="flex justify-between items-center mt-2">
-              <Skeleton className="h-4 w-1/3" /> {/* Date part */}
-              <Skeleton className="h-4 w-1/4" /> {/* ViewCounter part */}
+              {/* Date part: Added rounded-lg, opacity-75, and specific bg colors */}
+              <Skeleton className="h-4 w-1/3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
+              {/* ViewCounter part: Added rounded-lg, opacity-75, and specific bg colors */}
+              <Skeleton className="h-4 w-1/4 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
             </div>
           </div>
         ))}
@@ -124,8 +125,10 @@ export default function BlogList({ allViews }: BlogListProps) {
           {posts.map((post) => (
             <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
               <Link href={`/blog/${post.slug}`} className="block">
-                <h3 className="text-xl font-semibold text-blue-600 dark:text-blue-400 hover:underline">{post.title}</h3>
-                <div className="text-sm text-gray-500 dark:text-gray-400 mt-1 flex justify-between items-center">
+                {/* Changed dark mode title color to white */}
+                <h3 className="text-xl font-semibold text-blue-600 dark:text-white hover:underline">{post.title}</h3>
+                {/* Changed dark mode secondary text color to gray-300 */}
+                <div className="text-sm text-gray-500 dark:text-gray-300 mt-1 flex justify-between items-center">
                   <span>Published on: {new Date(post.publishedAt).toLocaleDateString()}</span>
                   {/* Ensure ViewCounter is only rendered for posts with a slug */}
                   {post.slug && (
@@ -145,16 +148,26 @@ export default function BlogList({ allViews }: BlogListProps) {
 
       <h2 className="text-2xl font-bold mt-8 mb-4">Coming Soon</h2>
       {comingSoonPosts.length > 0 ? (
-        <ul className="space-y-4">
+        // Changed ul to div, Link items will manage their own margins
+        <div> 
           {comingSoonPosts.map((post) => (
-            <li key={post.id || post.title} className="p-4 border rounded-lg opacity-70 bg-gray-50 dark:bg-gray-850">
-              {/* Optional: Add LottieAnimation here if desired */}
-              {/* <LottieAnimation animationData={animationData} className="w-16 h-16 mr-4" /> */}
-              <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">{post.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Coming Soon...</p>
-            </li>
+            <Link 
+              key={post.id || post.title} 
+              href={`/blog`} // Links to the main blog page
+              className="flex flex-col space-y-1 mb-4" // Styling from prompt
+            >
+              <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 dark:hover:bg-gray-800 duration-200 rounded-md p-4 opacity-70">
+                <p className="dark:text-neutral-100 tracking-tight">
+                  {post.title}
+                </p>
+                <Suspense fallback={<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>}> {/* Fallback from prompt, removed animate-pulse as not specified */}
+                  <LottieAnimation width={30} height={30} type={'writing'} />
+                </Suspense>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Coming Soon...</p> {/* Added mt-1 for spacing similar to published posts */}
+              </div>
+            </Link>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No upcoming posts announced yet.</p>
       )}
