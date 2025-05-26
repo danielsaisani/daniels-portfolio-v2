@@ -11,7 +11,8 @@ import { LottieAnimation } from '@/app/components/ui/lottie'; // Added LottieAni
 // Interfaces
 // This interface matches the structure returned by our /api/blogs endpoint
 interface ApiPost {
-  id: string; // This is the documentId from Strapi
+  id: number; // Strapi's numeric primary key
+  documentId: string; // Strapi's UID field (e.g., for querying by a consistent string ID)
   title: string;
   slug: string;
   publishedAt: string | null; // ISO date string, or null if not published
@@ -90,15 +91,15 @@ export default function BlogList({ allViews }: BlogListProps) {
   
         // Determine "Coming Soon" posts
         // Create a Set of documentIds from validPublishedPosts for efficient lookup.
-        // Using p.id as 'id' is the documentId in ApiPost interface
-        const publishedDocumentIds = new Set(validPublishedPosts.map(p => p.id)); 
+        // Changed from p.id to p.documentId
+        const publishedDocumentIds = new Set(validPublishedPosts.map(p => p.documentId)); 
   
         const actualComingSoonPosts = fetchedDraftPosts.filter(draftPost => {
           // Condition 1: `publishedAt` is falsy (null, undefined, empty string)
           const isPublishedAtFalsy = !draftPost.publishedAt;
           // Condition 2: The post is not already in the list of published IDs.
-          // Using draftPost.id as 'id' is the documentId in ApiPost interface
-          const notInPublished = !publishedDocumentIds.has(draftPost.id); 
+          // Changed from draftPost.id to draftPost.documentId
+          const notInPublished = !publishedDocumentIds.has(draftPost.documentId); 
   
           return isPublishedAtFalsy && notInPublished;
         });
@@ -183,7 +184,7 @@ export default function BlogList({ allViews }: BlogListProps) {
         <div> 
           {comingSoonPosts.map((post) => (
             <Link 
-              key={post.id || post.title} 
+              key={post.documentId || post.id} // Changed key to use documentId or numeric id
               href={`/blog`} // Links to the main blog page
               className="flex flex-col space-y-1 mb-4" // Styling from prompt
             >
