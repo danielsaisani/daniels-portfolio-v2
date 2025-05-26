@@ -47,49 +47,80 @@ export default function BlogList({ allViews }: BlogListProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      // setIsLoading(true); // Already true on initial load, useful for refresh
+    const fetchBlogData = async () => {
+      setIsLoading(true);
+      setError(null);
       try {
-        const response = await fetch('/api/blogs');
-        if (!response.ok) {
-          throw new Error(`API request failed with status ${response.status}`);
-        }
-        const result = await response.json();
-        const allPosts: ApiPost[] = result.response?.data || [];
-
-        const now = new Date();
-        const published: PublishedPost[] = [];
-        const upcoming: UpcomingPost[] = [];
-
-        allPosts.forEach(post => {
-          if (post.publishedAt) {
-            const publishedDate = new Date(post.publishedAt);
-            if (publishedDate <= now) {
-              published.push(post as PublishedPost); // Cast because we've checked publishedAt
-            } else {
-              // PublishedAt is in the future
-              upcoming.push(post);
-            }
-          } else {
-            // No publishedAt date, so it's upcoming
-            upcoming.push(post);
+        const [publishedResponse, draftResponse] = await Promise.all([
+          fetch('/api/blogs'), // Fetches published posts (or all if not filtered by API)
+          fetch('/api/blogs?status=draft') // Fetches draft posts
+        ]);
+  
+        if (!publishedResponse.ok || !draftResponse.ok) {
+          let errorMsg = 'Failed to fetch blog data.';
+          if (!publishedResponse.ok) {
+              // Try to parse error, default to statusText if parsing fails or no specific error field
+              const presErrorBody = await publishedResponse.json().catch(() => null);
+              const presErrorDetail = presErrorBody?.error || publishedResponse.statusText;
+              errorMsg += ` Published endpoint error: ${publishedResponse.status} ${presErrorDetail}.`;
           }
+          if (!draftResponse.ok) {
+              const dresErrorBody = await draftResponse.json().catch(() => null);
+              const dresErrorDetail = dresErrorBody?.error || draftResponse.statusText;
+              errorMsg += ` Draft endpoint error: ${draftResponse.status} ${dresErrorDetail}.`;
+          }
+          throw new Error(errorMsg);
+        }
+  
+        const publishedResult = await publishedResponse.json();
+        const draftResult = await draftResponse.json();
+  
+        // Assuming the API returns data in result.response.data structure
+        // Changed from response?.data to response.data as per prompt
+        const fetchedPublishedPosts: ApiPost[] = publishedResult.response.data || []; 
+        const fetchedDraftPosts: ApiPost[] = draftResult.response.data || [];
+  
+        // Filter and set the published posts
+        // Ensure publishedAt is valid for PublishedPost type and not in the future.
+        const validPublishedPosts = fetchedPublishedPosts.filter(
+          p => p.publishedAt && new Date(p.publishedAt) <= new Date()
+        );
+        setPosts(validPublishedPosts.map(p => ({ ...p, publishedAt: p.publishedAt! })));
+        
+  
+        // Determine "Coming Soon" posts
+        // Create a Set of documentIds from validPublishedPosts for efficient lookup.
+        // Using p.id as 'id' is the documentId in ApiPost interface
+        const publishedDocumentIds = new Set(validPublishedPosts.map(p => p.id)); 
+  
+        const actualComingSoonPosts = fetchedDraftPosts.filter(draftPost => {
+          // Condition 1: `publishedAt` is falsy (null, undefined, empty string)
+          const isPublishedAtFalsy = !draftPost.publishedAt;
+          // Condition 2: The post is not already in the list of published IDs.
+          // Using draftPost.id as 'id' is the documentId in ApiPost interface
+          const notInPublished = !publishedDocumentIds.has(draftPost.id); 
+  
+          return isPublishedAtFalsy && notInPublished;
         });
-
-        setPosts(published);
-        setComingSoonPosts(upcoming);
+        
+        // Ensure publishedAt is explicitly null for UpcomingPost type.
+        setComingSoonPosts(actualComingSoonPosts.map(p => ({ ...p, publishedAt: null })));
+  
+        // Clear any previous error messages on successful fetch
         setError(null);
+  
       } catch (err) {
-        console.error("Failed to fetch blog posts:", err);
-        setError("Failed to load blog posts. Please try again later.");
+        console.error("Error fetching blog data:", err);
+        setError(err instanceof Error ? err.message : 'An unknown error occurred.');
+        // Clear posts on error to avoid displaying stale data
         setPosts([]);
         setComingSoonPosts([]);
       } finally {
         setIsLoading(false);
       }
     };
-
-    fetchPosts();
+  
+    fetchBlogData();
   }, []);
 
   if (isLoading) {
