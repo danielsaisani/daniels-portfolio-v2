@@ -1,72 +1,25 @@
-import Link from 'next/link';
-import { Suspense } from 'react';
-import ViewCounter from './view-counter';
-import { getViewsCount } from 'app/db/queries';
-import { getBlogPosts, getUnpublishedBlogPosts } from 'app/db/blog';
-import { LottieAnimation } from '@/app/components/ui/lottie';
+// Removed Link, Suspense, ViewCounter, getViewsCount, getBlogPosts, getUnpublishedBlogPosts, LottieAnimation imports
+// as they are no longer directly used in this file. BlogList handles its own needs.
+import BlogList from './BlogList';
 
 export const metadata = {
   title: 'Blog',
   description: 'DanielKS\'s thoughts on a plethora of subject matter, namely software engineering , personal growth, and more.',
 };
 
-export default async function BlogPage() {
-
-  const allBlogs = await getBlogPosts();
-  const allBlogsComingSoon = await getUnpublishedBlogPosts();
-
+// BlogPage is now a simple server component that renders BlogList (a client component).
+export default function BlogPage() {
+  // Data fetching and rendering logic has been moved to BlogList.tsx
   return (
     <section className={'animate-fadeIn'}>
       <h1 className="font-medium text-2xl mb-8 tracking-tighter">
         my stories, opinions, projects and untamed thoughts all let loose onto a page
       </h1>
-      {allBlogs && allBlogs
-        .sort((a, b) => {
-          if (
-            new Date(a.publishedAt) > new Date(b.publishedAt)
-          ) {
-            return -1;
-          }
-          return 1;
-        })
-        .map((post) => (
-          <Link
-            key={post.slug}
-            className="flex flex-col space-y-1 mb-4"
-            href={`/blog/${post.slug}`}
-          >
-            <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
-              <p className="dark:text-neutral-100 tracking-tight">
-                {post.title}
-              </p>
-              <Suspense fallback={<p className="h-6" />}>
-                <Views slug={post.slug} />
-              </Suspense>
-            </div>
-          </Link>
-        ))}
-      {allBlogsComingSoon && allBlogsComingSoon
-        .map((post) => (
-          <Link
-            className="flex flex-col space-y-1 mb-4"
-            href={`/blog`}
-          >
-            <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 duration-200 rounded-md p-4">
-              <p className="dark:text-neutral-100 tracking-tight">
-                {post.title}
-              </p>
-              <Suspense fallback={<p className="h-6" />}>
-                <LottieAnimation width={30} height={30} type={'writing'} />
-              </Suspense>
-            </div>
-          </Link>
-        ))}
-    </section >
+      <BlogList />
+    </section>
   );
 }
 
-async function Views({ slug }: { slug: string }) {
-  let views = await getViewsCount();
-
-  return <ViewCounter allViews={views} slug={slug} />;
-}
+// Removed the Views async component as ViewCounter is now used directly within BlogList.tsx
+// and data fetching specific to blog views (if any, beyond what ViewCounter does)
+// would also be encapsulated there or in its related components/API calls.
