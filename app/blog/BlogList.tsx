@@ -37,13 +37,14 @@ interface ViewCount {
 }
 
 // Define the props for BlogList component
-interface BlogListProps {
-  allViews: ViewCount[];
-}
+// interface BlogListProps { // Removed allViews, so props interface is no longer needed if empty
+//   allViews: ViewCount[];
+// }
 
-export default function BlogList({ allViews }: BlogListProps) {
+export default function BlogList(/* { allViews }: BlogListProps */) { // Removed allViews from props
   const [posts, setPosts] = useState<PublishedPost[]>([]);
   const [comingSoonPosts, setComingSoonPosts] = useState<UpcomingPost[]>([]);
+  const [allViewsData, setAllViewsData] = useState<ViewCount[] | null>(null); // Added state for allViewsData
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -107,7 +108,26 @@ export default function BlogList({ allViews }: BlogListProps) {
         // Ensure publishedAt is explicitly null for UpcomingPost type.
         setComingSoonPosts(actualComingSoonPosts.map(p => ({ ...p, publishedAt: null })));
   
-        // Clear any previous error messages on successful fetch
+        // Fetch all views data after successfully fetching posts
+        try {
+          const viewsResponse = await fetch('/api/views/all');
+          if (!viewsResponse.ok) {
+            console.error('Failed to fetch all views:', viewsResponse.statusText);
+            // Not throwing error here to allow posts to render even if views fail
+            // ViewCounter will handle null allViewsData
+          } else {
+            const viewsResult = await viewsResponse.json();
+            if (viewsResult.success) {
+              setAllViewsData(viewsResult.views);
+            } else {
+              console.error('Error in views API response:', viewsResult.error);
+            }
+          }
+        } catch (viewsError) {
+          console.error('Error fetching views data:', viewsError);
+        }
+
+        // Clear any previous main error messages on successful fetch of posts
         setError(null);
   
       } catch (err) {
@@ -155,18 +175,18 @@ export default function BlogList({ allViews }: BlogListProps) {
       {posts.length > 0 ? (
         <ul className="space-y-4">
           {posts.map((post) => (
-            <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 hover:text-dark dark:hover:bg-gray-800 transition-colors">
+            <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
               <Link href={`/blog/${post.slug}`} className="block">
                 {/* Changed dark mode title color to white */}
-                <h3 className="text-xl font-semibold dark:text-white">{post.title}</h3>
+                <h3 className="text-xl font-semibold text-blue-600 dark:text-white hover:underline">{post.title}</h3>
                 {/* Changed dark mode secondary text color to gray-300 */}
                 <div className="text-sm text-gray-500 dark:text-gray-300 mt-1 flex justify-between items-center">
-                  <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
+                  <span>Published on: {new Date(post.publishedAt).toLocaleDateString()}</span>
                   {/* Ensure ViewCounter is only rendered for posts with a slug */}
                   {post.slug && (
                     <Suspense fallback={<div className="h-5 w-16 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
-                      {/* Pass allViews to ViewCounter */}
-                      <ViewCounter slug={post.slug} allViews={allViews} />
+                      {/* Pass allViewsData (which can be null) to ViewCounter */}
+                      <ViewCounter slug={post.slug} allViews={allViewsData} />
                     </Suspense>
                   )}
                 </div>
