@@ -34,19 +34,22 @@ export async function getBlogViews() {
   return views.reduce((acc, curr) => acc + Number(curr.count), 0);
 }
 
-export async function getViewsCount(): Promise<
-  { slug: string; count: number }[]
-> {
-  if (!process.env.POSTGRES_URL) {
-    return [];
+export const getViewsCount = cache(
+  async (): Promise<{ slug: string; count: number }[]> => {
+    if (!process.env.POSTGRES_URL) {
+      return [];
+    }
+    // noStore() was removed here
+    return sql`
+      SELECT slug, count
+      FROM views
+    `;
+  },
+  ['all-blog-views'], // Cache key
+  {
+    revalidate: 300, // Revalidate every 5 minutes
   }
-
-  noStore();
-  return sql`
-    SELECT slug, count
-    FROM views
-  `;
-}
+);
 
 export async function getBlogLikes() {
   if (!process.env.POSTGRES_URL) {
