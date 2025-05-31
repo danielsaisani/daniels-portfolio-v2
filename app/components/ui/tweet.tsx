@@ -1,22 +1,32 @@
 "use client";
 
-import { getTweet } from 'react-tweet/api';
+import { getTweet } from 'react-tweet/api'; // Ensure getTweet is imported
 import { useState, useEffect, Suspense } from 'react';
 import {
   TweetSkeleton,
   EmbeddedTweet,
   TweetNotFound,
-  type Tweet as TweetData, // Renamed type import
-  type TweetProps,
+  type TweetProps // Keep if used for props typing
+  // Remove 'type Tweet as TweetData' or 'type Tweet' if it was explicitly imported for useState before
 } from 'react-tweet';
 import './tweet.css';
 
-// TweetContentInternal now handles its own data fetching and state
+// Infer the type of the tweet data from the getTweet function
+// This creates a type that matches exactly what getTweet returns (Tweet | undefined)
+type InferredTweetDataFromGetTweet = Awaited<ReturnType<typeof getTweet>>;
+
+// For useState, we typically want to store the Tweet object itself or null if not found/error.
+// getTweet returns Tweet | undefined. So InferredTweetData will be Tweet | undefined.
+// We can make our state explicitly Tweet | null.
+type TweetState = Extract<InferredTweetDataFromGetTweet, object> | null;
+
+
 const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps) => {
-  // Use TweetData | null for state
-  const [tweet, setTweet] = useState<TweetData | null>(null);
+  // Use the inferred type for state, coercing undefined to null.
+  const [tweet, setTweet] = useState<TweetState>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<any>(null);
+  // It's good practice to type error more specifically if possible, e.g., Error | null
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!id) {
@@ -31,7 +41,7 @@ const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps)
     setError(null);
 
     getTweet(id)
-      .then((fetchedTweet) => {
+      .then((fetchedTweet: InferredTweetDataFromGetTweet) => {
         // If fetchedTweet is undefined (not found by API), set state to null
         setTweet(fetchedTweet || null);
       })
@@ -40,7 +50,7 @@ const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps)
         if (onError) {
           onError(err);
         }
-        setError(err);
+        setError(err instanceof Error ? err : new Error('Failed to fetch tweet'));
         setTweet(null);
       })
       .finally(() => {
@@ -52,13 +62,16 @@ const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps)
     return <TweetSkeleton {...props} />;
   }
 
-  if (error || !tweet) { // If error exists or tweet is null
+  if (error || !tweet) {
     const NotFound = components?.TweetNotFound || TweetNotFound;
+    // Pass the error to NotFound if it's designed to accept one
+    // The default TweetNotFound from 'react-tweet' doesn't typically use an error prop.
+    // So, if 'error' is the primary reason for not found, that's fine.
     return <NotFound />;
   }
 
-  // When passing to EmbeddedTweet, it expects a prop named 'tweet' of type 'Tweet' (original name from library)
-  // So, we pass the 'tweet' state variable which is of type TweetData (our alias for Tweet)
+  // The type of 'tweet' here is Tweet (extracted from Tweet | undefined)
+  // EmbeddedTweet expects 'Tweet' from 'react-tweet'
   return <EmbeddedTweet tweet={tweet} components={components} {...props} />;
 };
 
