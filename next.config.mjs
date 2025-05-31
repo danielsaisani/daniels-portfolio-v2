@@ -10,6 +10,7 @@ const nextConfig = {
   // experimental: {
   //   ppr: false,
   // },
+  transpilePackages: ['next-mdx-remote'],
   async redirects() {
     if (!process.env.POSTGRES_URL) {
       return [];
