@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect, Suspense } from 'react';
-// import { notFound } from 'next/navigation'; // notFound is for server components; client uses setError
 
-// Assuming these are correctly imported from their locations
-import { getBlogPosts, getBlogPost } from '@/app/db/blog';
+// REMOVE: import { getBlogPosts, getBlogPost } from '@/app/db/blog';
+// These are now fetched via API
 import { getViewsCount } from '@/app/db/queries'; // For ClientViews
 import BlogPostSkeleton from './skeleton';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import ViewCounter from '../view-counter';
 import { increment } from '@/app/db/actions';
-// import { cache } from 'react'; // Removed as unused
-// import { unstable_noStore as noStore } from 'next/cache'; // Removed as noStore call is removed
+// import { unstable_noStore as noStore } from 'next/cache'; // noStore call was removed from formatDate
 
 // Post interface
 interface Post {
@@ -26,7 +24,6 @@ interface Post {
 
 // formatDate function
 function formatDate(date: string) {
-  // noStore(); // Removed noStore call as this is now client-side logic
   let currentDate = new Date().getTime();
   if (!date.includes('T')) {
     date = `${date}T00:00:00`;
@@ -94,32 +91,21 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
       setIsLoading(true);
       setError(null);
       setPostData(null);
+
+      if (!params.slug) {
+        setError("No slug provided.");
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const allPostsMetaData = await getBlogPosts();
-        const blogMetaData = allPostsMetaData?.find(p => p.slug === params.slug);
-
-        if (!blogMetaData || !blogMetaData.blogId) {
-          setError("Post not found.");
-          setIsLoading(false);
-          return;
+        const response = await fetch(`/api/blog-posts/${params.slug}`);
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: `Error fetching post: ${response.statusText}` }));
+          throw new Error(errorData.message || `Error fetching post: ${response.statusText}`);
         }
-
-        const rawPostData = await getBlogPost(blogMetaData.blogId);
-        if (!rawPostData) {
-          setError("Post data could not be loaded.");
-          setIsLoading(false);
-          return;
-        }
-
-        const finalPostData: Post = {
-          ...rawPostData,
-          blogId: blogMetaData.blogId,
-          slug: blogMetaData.slug,
-          title: rawPostData.title || "Untitled",
-          publishedAt: rawPostData.publishedAt || new Date().toISOString(),
-          blocks: rawPostData.blocks || [],
-        };
-        setPostData(finalPostData);
+        const data: Post = await response.json();
+        setPostData(data);
       } catch (e: any) {
         console.error("Failed to fetch blog post:", e);
         setError(e.message || "An error occurred while fetching the post.");
@@ -128,12 +114,7 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
       }
     };
 
-    if (params.slug) {
-      fetchData();
-    } else {
-      setError("No slug provided.");
-      setIsLoading(false);
-    }
+    fetchData();
   }, [params.slug]);
 
   if (isLoading) return <BlogPostSkeleton />;
