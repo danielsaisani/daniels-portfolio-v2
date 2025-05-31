@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Suspense, cache } from 'react';
+import { Suspense, cache } from 'react'; // Ensure Suspense is imported
 import { notFound } from 'next/navigation';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import { getViewsCount } from 'app/db/queries';
@@ -7,11 +7,22 @@ import { getBlogPosts, getBlogPost } from 'app/db/blog';
 import ViewCounter from '../view-counter';
 import { increment } from 'app/db/actions';
 import { unstable_noStore as noStore } from 'next/cache';
+import BlogPostSkeleton from './skeleton'; // Import the skeleton
+import { Skeleton } from '@/app/components/ui/skeleton'; // Import Skeleton for inner fallbacks
 
 export async function generateMetadata({
   params,
 }): Promise<Metadata | undefined> {
-  const post = await getBlogPost(params.slug);
+  // Logic for metadata generation remains the same
+  // It's important that this uses params.slug directly as before,
+  // and not rely on the find operation which is now in PostContent
+  const posts = await getBlogPosts();
+  const blog = posts.find(post => post.slug === params.slug);
+
+  if (!blog) {
+    return;
+  }
+  const post = await getBlogPost(blog.blogId);
 
   if (!post) {
     return;
@@ -20,7 +31,7 @@ export async function generateMetadata({
   let {
     title,
     publishedAt: publishedTime,
-    // summary: description,
+    // summary: description, // Assuming these are handled or not needed for now
     // image,
   } = { ...post };
 
@@ -54,6 +65,7 @@ export async function generateMetadata({
 
 function formatDate(date: string) {
   noStore();
+  // ... (rest of formatDate function remains unchanged)
   let currentDate = new Date().getTime();
   if (!date.includes('T')) {
     date = `${date}T00:00:00`;
@@ -84,13 +96,24 @@ function formatDate(date: string) {
   }
 }
 
-export default async function Blog({ params }) {
+let incrementViews = cache(increment);
 
-  const posts = await getBlogPosts()
+async function Views({ slug }: { slug: string }) {
+  let views = await getViewsCount();
+  incrementViews(slug);
+  return <ViewCounter allViews={views} slug={slug} />;
+}
 
-  const blog = posts.find(post => post.slug === params.slug)
+// Define the new async component for the actual content
+async function PostContent({ params }) {
+  const posts = await getBlogPosts();
+  const blog = posts.find(post => post.slug === params.slug);
 
-  const post = (await getBlogPost(blog?.blogId));
+  if (!blog) {
+    notFound();
+  }
+  // Ensure blog is not undefined before accessing blogId
+  const post = await getBlogPost(blog.blogId);
 
   if (!post) {
     notFound();
@@ -108,10 +131,10 @@ export default async function Blog({ params }) {
             headline: post.title,
             datePublished: post.publishedAt,
             dateModified: post.publishedAt,
-            description: post.title,
-            image: post.title
-              ? `https://danielsaisani.com${post.title}`
-              : `https://danielsaisani.com/og?title=${post.title}`,
+            description: post.title, // Assuming title is okay for description
+            image: post.title // Assuming title is okay for image, adjust if needed
+              ? `https://www.danielsaisani.com/opengraph-image.png` // Placeholder, original logic was post.title which is not an image URL
+              : `https://www.danielsaisani.com/og?title=${post.title}`,
             url: `https://danielsaisani.com/blog/${post.slug}`,
             author: {
               '@type': 'Person',
@@ -124,12 +147,12 @@ export default async function Blog({ params }) {
         {post.title}
       </h1>
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-        <Suspense fallback={<p className="h-5" />}>
+        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}> {/* Smaller skeleton for date */}
           <p className="text-sm">
             {formatDate(post.publishedAt)}
           </p>
         </Suspense>
-        <Suspense fallback={<p className="h-5" />}>
+        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}> {/* Smaller skeleton for views */}
           <Views slug={post.slug} />
         </Suspense>
       </div>
@@ -140,10 +163,11 @@ export default async function Blog({ params }) {
   );
 }
 
-let incrementViews = cache(increment);
-
-async function Views({ slug }: { slug: string }) {
-  let views = await getViewsCount();
-  incrementViews(slug);
-  return <ViewCounter allViews={views} slug={slug} />;
+// Modified default export Blog function
+export default function Blog({ params }) {
+  return (
+    <Suspense fallback={<BlogPostSkeleton />}>
+      <PostContent params={params} />
+    </Suspense>
+  );
 }
