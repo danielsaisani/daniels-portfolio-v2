@@ -121,8 +121,30 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
   if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
   if (!postData) return <div className="p-4">Post not found or no slug provided.</div>;
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
+
   return (
     <section className="animate-fadeIn">
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'BlogPosting',
+            headline: postData.title,
+            datePublished: postData.publishedAt,
+            dateModified: postData.publishedAt, // Or use a separate modifiedDate field if available
+            description: postData.description || postData.title, // Assuming a description field or fallback to title
+            image: `${siteUrl}/og?title=${encodeURIComponent(postData.title)}`, // General OG image
+            url: `${siteUrl}/blog/${postData.slug}`,
+            author: {
+              '@type': 'Person',
+              name: 'Daniel Saisani', // This could also be from env or config
+            },
+          }),
+        }}
+      />
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
         {postData.title}
       </h1>

@@ -36,22 +36,24 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     slug: metaForPost.slug
   };
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
+
   return {
     title: finalPostData.title,
     openGraph: {
       title: finalPostData.title,
       type: 'article',
       publishedTime: finalPostData.publishedAt,
-      url: `https://danielsaisani.com/blog/${finalPostData.slug}`,
+      url: `${siteUrl}/blog/${finalPostData.slug}`,
       // Consider adding description and images if available in finalPostData
       // description: finalPostData.summary,
-      // images: finalPostData.image ? [{ url: `https://danielsaisani.com${finalPostData.image}` }] : [],
+      // images: finalPostData.image ? [{ url: `${siteUrl}${finalPostData.image}` }] : [], // Assuming image path starts with /
     },
     twitter: {
       card: 'summary_large_image',
       title: finalPostData.title,
       // description: finalPostData.summary,
-      // images: finalPostData.image ? [`https://danielsaisani.com${finalPostData.image}`] : [],
+      // images: finalPostData.image ? [`${siteUrl}${finalPostData.image}`] : [], // Assuming image path starts with /
     },
     // description: finalPostData.summary, // Add top-level description if available
   };

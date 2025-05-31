@@ -1,11 +1,12 @@
 export default function robots() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
   return {
     rules: [
       {
         userAgent: '*',
       },
     ],
-    sitemap: 'https://danielsaisani.com/sitemap.xml',
-    host: 'https://danielsaisani.com',
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
   };
 }

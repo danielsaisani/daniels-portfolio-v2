@@ -39,7 +39,7 @@ const ContentSecurityPolicy = `
     default-src 'self' vercel.live;
     script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    style-src-elem 'self' https://fonts.googleapis.com;
+    style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';
     img-src * blob: data:;
     media-src 'none';
     connect-src *;
