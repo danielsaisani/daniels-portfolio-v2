@@ -5,7 +5,7 @@ import { useState, useEffect, Suspense } from 'react';
 // REMOVE: import { getBlogPosts, getBlogPost } from '@/app/db/blog';
 // These are now fetched via API
 import { getViewsCount } from '@/app/db/queries'; // For ClientViews
-import BlogPostSkeleton from './skeleton';
+import BlogPostSkeleton from './loading';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import ViewCounter from '../view-counter';
