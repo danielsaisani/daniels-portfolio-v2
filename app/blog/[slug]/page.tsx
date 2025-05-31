@@ -1,51 +1,39 @@
+"use client";
+
 import type { Metadata } from 'next';
-import { Suspense, cache } from 'react';
-import { notFound } from 'next/navigation';
-import { CustomMDX } from '@/app/components/ui/mdx';
-import { getViewsCount } from 'app/db/queries';
-import { getBlogPosts, getBlogPost } from 'app/db/blog';
+import { useState, useEffect, Suspense, cache } from 'react';
+
+import { getBlogPosts, getBlogPost } from '@/app/db/blog';
+import { getViewsCount } from '@/app/db/queries';
 import ViewCounter from '../view-counter';
-import { increment } from 'app/db/actions';
+import { increment } from '@/app/db/actions';
 import { unstable_noStore as noStore } from 'next/cache';
+
 import BlogPostSkeleton from './skeleton';
 import { Skeleton } from '@/app/components/ui/skeleton';
+import { CustomMDX } from '@/app/components/ui/mdx';
 
-// Updated Post interface
 interface Post {
   blogId: string;
   slug: string;
   title: string;
   publishedAt: string;
   blocks: Array<{ body: string }>;
-  // Add any other fields that are expected to be part of rawPostData
-  // For example, if 'description' or other fields are returned by getBlogPost
-  [key: string]: any; // Allows other properties from rawPostData
+  [key: string]: any;
 }
 
-export async function generateMetadata({
-  params,
-}: { params: { slug: string } }): Promise<Metadata | undefined> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata | undefined> {
   const allPostsMeta = await getBlogPosts();
-  // Ensure allPostsMeta is not null or undefined before calling find
   const metaForPost = allPostsMeta?.find(p => p.slug === params.slug);
 
   if (!metaForPost || !metaForPost.blogId) {
     return { title: "Blog Post Not Found" };
   }
-
   const postDataForMeta = await getBlogPost(metaForPost.blogId);
-
   if (!postDataForMeta) {
     return { title: "Blog Post Data Not Found" };
   }
-
-  // Construct an object that safely provides the needed properties
-  const finalPostData = {
-    ...postDataForMeta,
-    slug: metaForPost.slug, // Ensure slug from metadata is used
-    // title and publishedAt should come from postDataForMeta
-  };
-
+  const finalPostData = { ...postDataForMeta, slug: metaForPost.slug };
   return {
     title: finalPostData.title,
     openGraph: {
@@ -53,7 +41,6 @@ export async function generateMetadata({
       type: 'article',
       publishedTime: finalPostData.publishedAt,
       url: `https://danielsaisani.com/blog/${finalPostData.slug}`,
-      // images: [ ... ]
     },
     twitter: {
       card: 'summary_large_image',
@@ -62,7 +49,7 @@ export async function generateMetadata({
   };
 }
 
-function formatDate(date: string) {
+function formatDate(date: string): string {
   noStore();
   let currentDate = new Date().getTime();
   if (!date.includes('T')) {
@@ -94,104 +81,105 @@ function formatDate(date: string) {
   }
 }
 
-let incrementViews = cache(increment);
-
-async function Views({ slug }: { slug: string }) {
-  let views = await getViewsCount();
-  incrementViews(slug);
-  return <ViewCounter allViews={views} slug={slug} />;
+interface ClientViewsProps {
+  slug: string;
 }
 
-interface PostContentProps {
-  post: Post;
+function ClientViews({ slug }: ClientViewsProps) {
+  const [allViewsData, setAllViewsData] = useState<any[] | null>(null);
+
+  useEffect(() => {
+    // Increment views using server action
+    increment(slug);
+
+    // Fetch all view counts
+    const fetchViews = async () => {
+      try {
+        // IMPORTANT: This assumes getViewsCount() can be called client-side.
+        // In a production app, this might need to be an API call if getViewsCount directly accesses a database.
+        const views = await getViewsCount();
+        setAllViewsData(views);
+      } catch (error) {
+        console.error("Failed to fetch view counts:", error);
+        // Optionally set an error state for views
+        setAllViewsData([]); // Set to empty array on error to prevent ViewCounter from breaking
+      }
+    };
+
+    fetchViews();
+  }, [slug]);
+
+  return <ViewCounter slug={slug} allViews={allViewsData} />;
 }
 
-async function PostContent({ post }: PostContentProps) {
-  return (
-    <>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}>
-          <p className="text-sm">
-            {formatDate(post.publishedAt)}
-          </p>
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}>
-          <Views slug={post.slug} />
-        </Suspense>
-      </div>
-      <article className="pb-20">
-        {/* Ensure post.blocks exists and has at least one element */}
-        <CustomMDX source={post.blocks && post.blocks.length > 0 ? post.blocks[0].body : ''} />
-      </article>
-    </>
-  );
-}
 
-interface PostHeaderParams {
-  params: { slug: string };
-}
+export default function BlogPostPage({ params }: { params: { slug: string } }) {
+  const [postData, setPostData] = useState<Post | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-async function PostHeader({ params }: PostHeaderParams) {
-  const allPostsMetaData = await getBlogPosts();
-  // Ensure allPostsMetaData is not null or undefined before calling find
-  const blogMetaData = allPostsMetaData?.find(p => p.slug === params.slug);
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const allPostsMetaData = await getBlogPosts();
+        const blogMetaData = allPostsMetaData?.find(p => p.slug === params.slug);
 
-  if (!blogMetaData || !blogMetaData.blogId) {
-    notFound();
-  }
+        if (!blogMetaData || !blogMetaData.blogId) {
+          setError("Post not found.");
+          setIsLoading(false);
+          return;
+        }
 
-  const rawPostData = await getBlogPost(blogMetaData.blogId);
+        const rawPostData = await getBlogPost(blogMetaData.blogId);
+        if (!rawPostData) {
+          setError("Post data could not be loaded.");
+          setIsLoading(false);
+          return;
+        }
 
-  if (!rawPostData) {
-    notFound();
-  }
+        const finalPostData: Post = {
+          ...rawPostData,
+          blogId: blogMetaData.blogId,
+          slug: blogMetaData.slug,
+          title: rawPostData.title || blogMetaData.title,
+          publishedAt: rawPostData.publishedAt,
+          blocks: rawPostData.blocks || [],
+        };
+        setPostData(finalPostData);
 
-  // Construct the post object correctly
-  const post: Post = {
-    ...rawPostData, // Spread raw data from getBlogPost
-    blogId: blogMetaData.blogId, // Ensure blogId from metadata is included
-    slug: blogMetaData.slug,     // Ensure slug from metadata is included
-    // title, publishedAt, blocks should come from rawPostData if available
-    // If not, ensure they are part of blogMetaData and explicitly assigned if needed
-    title: rawPostData.title || blogMetaData.title, // Prioritize rawPostData, fallback to metadata
-    publishedAt: rawPostData.publishedAt, // Assuming publishedAt is in rawPostData
-    blocks: rawPostData.blocks || [], // Assuming blocks are in rawPostData
-  };
+      } catch (e: any) {
+        console.error("Failed to fetch blog post:", e);
+        setError(e.message || "An error occurred while fetching the post.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (params.slug) {
+      fetchData();
+    }
+  }, [params.slug]);
+
+  if (isLoading) return <BlogPostSkeleton />;
+  if (error) return <div>Error: {error}</div>;
+  if (!postData) return <div>Post not found.</div>;
 
   return (
     <section>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'BlogPosting',
-            headline: post.title,
-            datePublished: post.publishedAt,
-            dateModified: post.publishedAt,
-            description: post.title,
-            image: `https://danielsaisani.com/og?title=${encodeURIComponent(post.title)}`,
-            url: `https://danielsaisani.com/blog/${post.slug}`,
-            author: {
-              '@type': 'Person',
-              name: 'Daniel Saisani',
-            },
-          }),
-        }}
-      />
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
-        {post.title}
+        {postData.title}
       </h1>
-      <PostContent post={post} />
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+        <p className="text-sm">
+          {formatDate(postData.publishedAt)}
+        </p>
+        <ClientViews slug={postData.slug} />
+      </div>
+      <article className="pb-20">
+        <CustomMDX source={postData.blocks && postData.blocks.length > 0 ? postData.blocks[0].body : ''} />
+      </article>
     </section>
-  );
-}
-
-export default function Blog({ params }: PostHeaderParams) {
-  return (
-    <Suspense fallback={<BlogPostSkeleton />}>
-      <PostHeader params={params} />
-    </Suspense>
   );
 }
