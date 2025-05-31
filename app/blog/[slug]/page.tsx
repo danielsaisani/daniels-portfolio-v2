@@ -1,28 +1,39 @@
 import type { Metadata } from 'next';
-import { Suspense, cache } from 'react'; // Ensure Suspense is imported
+import { Suspense, cache } from 'react';
 import { notFound } from 'next/navigation';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import { getViewsCount } from 'app/db/queries';
+// getBlogPosts is needed to find slug -> blogId mapping
 import { getBlogPosts, getBlogPost } from 'app/db/blog';
 import ViewCounter from '../view-counter';
 import { increment } from 'app/db/actions';
 import { unstable_noStore as noStore } from 'next/cache';
-import BlogPostSkeleton from './skeleton'; // Import the skeleton
-import { Skeleton } from '@/app/components/ui/skeleton'; // Import Skeleton for inner fallbacks
+import BlogPostSkeleton from './skeleton';
+import { Skeleton } from '@/app/components/ui/skeleton';
+
+// Define Post type (can be expanded based on actual data structure)
+interface Post {
+  slug: string;
+  title: string;
+  publishedAt: string;
+  blocks: Array<{ body: string }>; // Example structure
+  blogId: string; // Ensure blogId is part of the Post type if used
+  // Add other necessary post fields
+}
 
 export async function generateMetadata({
   params,
-}): Promise<Metadata | undefined> {
-  // Logic for metadata generation remains the same
-  // It's important that this uses params.slug directly as before,
-  // and not rely on the find operation which is now in PostContent
-  const posts = await getBlogPosts();
-  const blog = posts.find(post => post.slug === params.slug);
+}: { params: { slug: string } }): Promise<Metadata | undefined> {
+  // Adapted fetching: first get all posts to find the blogId by slug
+  const allPosts = await getBlogPosts();
+  const blogMetaData = allPosts.find(p => p.slug === params.slug);
 
-  if (!blog) {
+  if (!blogMetaData || !blogMetaData.blogId) {
+    // If no post found with that slug, or blogId is missing
     return;
   }
-  const post = await getBlogPost(blog.blogId);
+
+  const post = await getBlogPost(blogMetaData.blogId);
 
   if (!post) {
     return;
@@ -31,28 +42,16 @@ export async function generateMetadata({
   let {
     title,
     publishedAt: publishedTime,
-    // summary: description, // Assuming these are handled or not needed for now
-    // image,
-  } = { ...post };
-
-  // let ogImage = image
-  //   ? `https://danielsaisani.com${image}`
-  //   : `https://danielsaisani.com/og?title=${title}`;
+  } = post;
 
   return {
     title,
-    // description,
     openGraph: {
       title,
-      // description,
       type: 'article',
       publishedTime,
       url: `https://danielsaisani.com/blog/${post.slug}`,
-      // images: [
-      //   {
-      //     url: ogImage,
-      //   },
-      // ],
+      // images: [ ... ]
     },
     twitter: {
       card: 'summary_large_image',
@@ -65,7 +64,6 @@ export async function generateMetadata({
 
 function formatDate(date: string) {
   noStore();
-  // ... (rest of formatDate function remains unchanged)
   let currentDate = new Date().getTime();
   if (!date.includes('T')) {
     date = `${date}T00:00:00`;
@@ -85,13 +83,13 @@ function formatDate(date: string) {
   } else if (daysAgo < 7) {
     return `${fullDate} (${daysAgo}d ago)`;
   } else if (daysAgo < 30) {
-    const weeksAgo = Math.floor(daysAgo / 7)
+    const weeksAgo = Math.floor(daysAgo / 7);
     return `${fullDate} (${weeksAgo}w ago)`;
   } else if (daysAgo < 365) {
-    const monthsAgo = Math.floor(daysAgo / 30)
+    const monthsAgo = Math.floor(daysAgo / 30);
     return `${fullDate} (${monthsAgo}mo ago)`;
   } else {
-    const yearsAgo = Math.floor(daysAgo / 365)
+    const yearsAgo = Math.floor(daysAgo / 365);
     return `${fullDate} (${yearsAgo}y ago)`;
   }
 }
@@ -104,16 +102,46 @@ async function Views({ slug }: { slug: string }) {
   return <ViewCounter allViews={views} slug={slug} />;
 }
 
-// Define the new async component for the actual content
-async function PostContent({ params }) {
-  const posts = await getBlogPosts();
-  const blog = posts.find(post => post.slug === params.slug);
+interface PostContentProps {
+  post: Post; // Use the defined Post interface
+}
 
-  if (!blog) {
+// Modified PostContent: Receives post as a prop
+async function PostContent({ post }: PostContentProps) {
+  return (
+    <>
+      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
+        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}>
+          <p className="text-sm">
+            {formatDate(post.publishedAt)}
+          </p>
+        </Suspense>
+        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}>
+          <Views slug={post.slug} />
+        </Suspense>
+      </div>
+      <article className="pb-20">
+        <CustomMDX source={post.blocks[0].body} />
+      </article>
+    </>
+  );
+}
+
+interface PostHeaderParams {
+  params: { slug: string };
+}
+
+// New PostHeader component
+async function PostHeader({ params }: PostHeaderParams) {
+  // Adapted fetching: first get all posts to find the blogId by slug
+  const allPosts = await getBlogPosts();
+  const blogMetaData = allPosts.find(p => p.slug === params.slug);
+
+  if (!blogMetaData || !blogMetaData.blogId) {
     notFound();
   }
-  // Ensure blog is not undefined before accessing blogId
-  const post = await getBlogPost(blog.blogId);
+
+  const post = await getBlogPost(blogMetaData.blogId) as Post; // Cast to Post
 
   if (!post) {
     notFound();
@@ -131,10 +159,8 @@ async function PostContent({ params }) {
             headline: post.title,
             datePublished: post.publishedAt,
             dateModified: post.publishedAt,
-            description: post.title, // Assuming title is okay for description
-            image: post.title // Assuming title is okay for image, adjust if needed
-              ? `https://www.danielsaisani.com/opengraph-image.png` // Placeholder, original logic was post.title which is not an image URL
-              : `https://www.danielsaisani.com/og?title=${post.title}`,
+            description: post.title,
+            image: `https://danielsaisani.com/og?title=${encodeURIComponent(post.title)}`,
             url: `https://danielsaisani.com/blog/${post.slug}`,
             author: {
               '@type': 'Person',
@@ -146,28 +172,16 @@ async function PostContent({ params }) {
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
         {post.title}
       </h1>
-      <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}> {/* Smaller skeleton for date */}
-          <p className="text-sm">
-            {formatDate(post.publishedAt)}
-          </p>
-        </Suspense>
-        <Suspense fallback={<Skeleton className="h-5 w-1/4 rounded-lg" />}> {/* Smaller skeleton for views */}
-          <Views slug={post.slug} />
-        </Suspense>
-      </div>
-      <article className="pb-20">
-        <CustomMDX source={post.blocks[0].body} />
-      </article>
+      <PostContent post={post} />
     </section>
   );
 }
 
-// Modified default export Blog function
-export default function Blog({ params }) {
+// Main Blog component
+export default function Blog({ params }: PostHeaderParams) {
   return (
     <Suspense fallback={<BlogPostSkeleton />}>
-      <PostContent params={params} />
+      <PostHeader params={params} />
     </Suspense>
   );
 }
