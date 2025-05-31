@@ -1,62 +1,91 @@
 import type { Metadata } from 'next';
-// Keep only imports needed by generateMetadata and the new default export
-import { getBlogPosts, getBlogPost } from '@/app/db/blog';
-import BlogPostClientPage from './BlogPostClientPage'; // Import the new client component
+import { getBlogPosts, getBlogPost } from '@/app/db/blog'; // Ensure correct path
+import BlogPostClientPage from './BlogPostClientPage';
 
-// Interface for data used in generateMetadata
-// This can be simpler than the full Post interface if fewer fields are needed for metadata
 interface PostForMeta {
   slug: string;
   title: string;
   publishedAt: string;
-  // Add any other fields from getBlogPost that are used in generateMetadata
   [key: string]: any;
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata | undefined> {
-  const allPostsMeta = await getBlogPosts();
-  const metaForPost = allPostsMeta?.find(p => p.slug === params.slug);
+  console.log(`[generateMetadata] Starting for slug: ${params.slug}`);
+  try {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
+    console.log(`[generateMetadata] Site URL: ${siteUrl}`);
 
-  if (!metaForPost || !metaForPost.blogId) {
-    return { title: "Blog Post Not Found" };
-  }
+    console.log('[generateMetadata] Fetching all posts metadata...');
+    const allPostsMeta = await getBlogPosts();
+    // Using a simpler log for allPostsMeta to avoid overly verbose output unless necessary
+    console.log(`[generateMetadata] All posts metadata fetched. Count: ${allPostsMeta?.length || 0}`);
 
-  // Fetch the full post data needed for metadata
-  const postDataForMeta = await getBlogPost(metaForPost.blogId);
 
-  if (!postDataForMeta) {
-    // If the specific post data can't be fetched, return a generic title
-    return { title: "Blog Post Details Not Available" };
-  }
+    if (!allPostsMeta || allPostsMeta.length === 0) {
+      console.warn('[generateMetadata] No posts metadata found or empty array.');
+      return { title: "Blog Post Not Found - No Metadata Available" };
+    }
 
-  // Construct an object that safely provides the needed properties for metadata
-  // Ensure that 'slug' from metaForPost (which matches params.slug) is used for the URL
-  const finalPostData: PostForMeta = {
-    ...postDataForMeta,
-    slug: metaForPost.slug
-  };
+    const metaForPost = allPostsMeta.find(p => p.slug === params.slug);
+    // Log metaForPost carefully, it might contain more data than needed for simple log
+    if (metaForPost) {
+      console.log(`[generateMetadata] Metadata for slug '${params.slug}': blogId: ${metaForPost.blogId}, title: ${metaForPost.title}`);
+    } else {
+      console.log(`[generateMetadata] Metadata for slug '${params.slug}': Not found`);
+    }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
 
-  return {
-    title: finalPostData.title,
-    openGraph: {
+    if (!metaForPost || !metaForPost.blogId) {
+      console.warn(`[generateMetadata] No matching metadata or blogId found for slug: ${params.slug}`);
+      return { title: "Blog Post Not Found - No Matching Metadata" };
+    }
+
+    console.log(`[generateMetadata] Fetching post details for blogId: ${metaForPost.blogId}...`);
+    const postDataForMeta = await getBlogPost(metaForPost.blogId);
+    if (postDataForMeta) {
+      console.log(`[generateMetadata] Post details fetched for blogId '${metaForPost.blogId}', title: ${postDataForMeta.title}`);
+    } else {
+      console.log(`[generateMetadata] Post details for blogId '${metaForPost.blogId}': Not found`);
+    }
+
+
+    if (!postDataForMeta) {
+      console.warn(`[generateMetadata] No post data found for blogId: ${metaForPost.blogId}`);
+      return { title: "Blog Post Not Found - Details Missing" };
+    }
+
+    const finalPostData: PostForMeta = {
+      ...postDataForMeta,
+      slug: metaForPost.slug
+    };
+    // Avoid logging the entire finalPostData if it's too large or contains sensitive info not relevant for this log level
+    console.log(`[generateMetadata] Final post data for metadata construction: title: ${finalPostData.title}, slug: ${finalPostData.slug}`);
+
+    const metadataResult: Metadata = {
       title: finalPostData.title,
-      type: 'article',
-      publishedTime: finalPostData.publishedAt,
-      url: `${siteUrl}/blog/${finalPostData.slug}`,
-      // Consider adding description and images if available in finalPostData
-      // description: finalPostData.summary,
-      // images: finalPostData.image ? [{ url: `${siteUrl}${finalPostData.image}` }] : [], // Assuming image path starts with /
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: finalPostData.title,
-      // description: finalPostData.summary,
-      // images: finalPostData.image ? [`${siteUrl}${finalPostData.image}`] : [], // Assuming image path starts with /
-    },
-    // description: finalPostData.summary, // Add top-level description if available
-  };
+      openGraph: {
+        title: finalPostData.title,
+        type: 'article',
+        publishedTime: finalPostData.publishedAt,
+        url: `${siteUrl}/blog/${finalPostData.slug}`,
+        // images: [ { url: `${siteUrl}/path/to/image.jpg` } ]
+      },
+      twitter: { // Added twitter card for completeness, similar to previous state
+        card: 'summary_large_image',
+        title: finalPostData.title,
+      },
+    };
+    // Avoid logging the full metadataResult if too verbose for most cases
+    console.log(`[generateMetadata] Successfully generated metadata for title: ${metadataResult.title}`);
+    return metadataResult;
+
+  } catch (error) {
+    console.error(`[generateMetadata] CRITICAL ERROR for slug '${params.slug}':`, error);
+    return {
+      title: "Error Generating Metadata",
+      description: "There was an issue generating metadata for this page."
+    };
+  }
 }
 
 // This is the new Server Component default export
