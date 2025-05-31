@@ -5,7 +5,6 @@ import { Navbar } from './components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
-import { BottomBar } from "./components/ui/bottom-bar";
 
 const inter = Poppins({
   subsets: ["latin"],
@@ -76,13 +75,12 @@ export default function RootLayout({
         <SandpackCSS />
       </head>
       <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 h-[100rem] gap-20">
+        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 gap-20">
           <Navbar />
           {children}
           <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
           <Analytics />
           <SpeedInsights />
-          <BottomBar />
         </main>
       </body>
     </html>
