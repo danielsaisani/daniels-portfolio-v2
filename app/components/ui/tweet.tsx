@@ -59,7 +59,7 @@ const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps)
   }, [id, onError]);
 
   if (isLoading) {
-    return <TweetSkeleton {...props} />;
+    return <TweetSkeleton />;
   }
 
   if (error || !tweet) {
