@@ -3,7 +3,6 @@ import { Suspense, cache } from 'react';
 import { notFound } from 'next/navigation';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import { getViewsCount } from 'app/db/queries';
-// getBlogPosts is needed to find slug -> blogId mapping
 import { getBlogPosts, getBlogPost } from 'app/db/blog';
 import ViewCounter from '../view-counter';
 import { increment } from 'app/db/actions';
@@ -11,53 +10,54 @@ import { unstable_noStore as noStore } from 'next/cache';
 import BlogPostSkeleton from './skeleton';
 import { Skeleton } from '@/app/components/ui/skeleton';
 
-// Define Post type (can be expanded based on actual data structure)
+// Updated Post interface
 interface Post {
+  blogId: string;
   slug: string;
   title: string;
   publishedAt: string;
-  blocks: Array<{ body: string }>; // Example structure
-  blogId: string; // Ensure blogId is part of the Post type if used
-  // Add other necessary post fields
+  blocks: Array<{ body: string }>;
+  // Add any other fields that are expected to be part of rawPostData
+  // For example, if 'description' or other fields are returned by getBlogPost
+  [key: string]: any; // Allows other properties from rawPostData
 }
 
 export async function generateMetadata({
   params,
 }: { params: { slug: string } }): Promise<Metadata | undefined> {
-  // Adapted fetching: first get all posts to find the blogId by slug
-  const allPosts = await getBlogPosts();
-  const blogMetaData = allPosts.find(p => p.slug === params.slug);
+  const allPostsMeta = await getBlogPosts();
+  // Ensure allPostsMeta is not null or undefined before calling find
+  const metaForPost = allPostsMeta?.find(p => p.slug === params.slug);
 
-  if (!blogMetaData || !blogMetaData.blogId) {
-    // If no post found with that slug, or blogId is missing
-    return;
+  if (!metaForPost || !metaForPost.blogId) {
+    return { title: "Blog Post Not Found" };
   }
 
-  const post = await getBlogPost(blogMetaData.blogId);
+  const postDataForMeta = await getBlogPost(metaForPost.blogId);
 
-  if (!post) {
-    return;
+  if (!postDataForMeta) {
+    return { title: "Blog Post Data Not Found" };
   }
 
-  let {
-    title,
-    publishedAt: publishedTime,
-  } = post;
+  // Construct an object that safely provides the needed properties
+  const finalPostData = {
+    ...postDataForMeta,
+    slug: metaForPost.slug, // Ensure slug from metadata is used
+    // title and publishedAt should come from postDataForMeta
+  };
 
   return {
-    title,
+    title: finalPostData.title,
     openGraph: {
-      title,
+      title: finalPostData.title,
       type: 'article',
-      publishedTime,
-      url: `https://danielsaisani.com/blog/${post.slug}`,
+      publishedTime: finalPostData.publishedAt,
+      url: `https://danielsaisani.com/blog/${finalPostData.slug}`,
       // images: [ ... ]
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      // description,
-      // images: [ogImage],
+      title: finalPostData.title,
     },
   };
 }
@@ -103,10 +103,9 @@ async function Views({ slug }: { slug: string }) {
 }
 
 interface PostContentProps {
-  post: Post; // Use the defined Post interface
+  post: Post;
 }
 
-// Modified PostContent: Receives post as a prop
 async function PostContent({ post }: PostContentProps) {
   return (
     <>
@@ -121,7 +120,8 @@ async function PostContent({ post }: PostContentProps) {
         </Suspense>
       </div>
       <article className="pb-20">
-        <CustomMDX source={post.blocks[0].body} />
+        {/* Ensure post.blocks exists and has at least one element */}
+        <CustomMDX source={post.blocks && post.blocks.length > 0 ? post.blocks[0].body : ''} />
       </article>
     </>
   );
@@ -131,21 +131,32 @@ interface PostHeaderParams {
   params: { slug: string };
 }
 
-// New PostHeader component
 async function PostHeader({ params }: PostHeaderParams) {
-  // Adapted fetching: first get all posts to find the blogId by slug
-  const allPosts = await getBlogPosts();
-  const blogMetaData = allPosts.find(p => p.slug === params.slug);
+  const allPostsMetaData = await getBlogPosts();
+  // Ensure allPostsMetaData is not null or undefined before calling find
+  const blogMetaData = allPostsMetaData?.find(p => p.slug === params.slug);
 
   if (!blogMetaData || !blogMetaData.blogId) {
     notFound();
   }
 
-  const post = await getBlogPost(blogMetaData.blogId) as Post; // Cast to Post
+  const rawPostData = await getBlogPost(blogMetaData.blogId);
 
-  if (!post) {
+  if (!rawPostData) {
     notFound();
   }
+
+  // Construct the post object correctly
+  const post: Post = {
+    ...rawPostData, // Spread raw data from getBlogPost
+    blogId: blogMetaData.blogId, // Ensure blogId from metadata is included
+    slug: blogMetaData.slug,     // Ensure slug from metadata is included
+    // title, publishedAt, blocks should come from rawPostData if available
+    // If not, ensure they are part of blogMetaData and explicitly assigned if needed
+    title: rawPostData.title || blogMetaData.title, // Prioritize rawPostData, fallback to metadata
+    publishedAt: rawPostData.publishedAt, // Assuming publishedAt is in rawPostData
+    blocks: rawPostData.blocks || [], // Assuming blocks are in rawPostData
+  };
 
   return (
     <section>
@@ -177,7 +188,6 @@ async function PostHeader({ params }: PostHeaderParams) {
   );
 }
 
-// Main Blog component
 export default function Blog({ params }: PostHeaderParams) {
   return (
     <Suspense fallback={<BlogPostSkeleton />}>
