@@ -6,15 +6,15 @@ import {
   TweetSkeleton,
   EmbeddedTweet,
   TweetNotFound,
-  type Tweet, // Consolidate type import
+  type Tweet as TweetData, // Renamed type import
   type TweetProps,
 } from 'react-tweet';
 import './tweet.css';
 
 // TweetContentInternal now handles its own data fetching and state
 const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps) => {
-  // Use Tweet | null for state, mapping undefined from getTweet to null
-  const [tweet, setTweet] = useState<Tweet | null>(null);
+  // Use TweetData | null for state
+  const [tweet, setTweet] = useState<TweetData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<any>(null);
 
@@ -57,6 +57,8 @@ const TweetContentInternal = ({ id, components, onError, ...props }: TweetProps)
     return <NotFound />;
   }
 
+  // When passing to EmbeddedTweet, it expects a prop named 'tweet' of type 'Tweet' (original name from library)
+  // So, we pass the 'tweet' state variable which is of type TweetData (our alias for Tweet)
   return <EmbeddedTweet tweet={tweet} components={components} {...props} />;
 };
 
