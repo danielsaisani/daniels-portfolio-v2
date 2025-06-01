@@ -12,14 +12,17 @@ import ViewCounter from '../view-counter';
 import { increment } from '@/app/db/actions';
 // import { unstable_noStore as noStore } from 'next/cache'; // noStore call was removed from formatDate
 
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // Add this import
+
 // Post interface
 interface Post {
   blogId: string;
   slug: string;
   title: string;
   publishedAt: string;
-  blocks: Array<{ body: string }>;
-  [key: string]: any;
+  mdxSource: MDXRemoteSerializeResult; // Expect the serialized MDX object
+  description?: string; // Keep existing optional fields like description
+  [key: string]: any; // Keep for other properties
 }
 
 // formatDate function
@@ -155,7 +158,13 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
         <ClientViews slug={postData.slug} />
       </div>
       <article className="prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
-        <CustomMDX source={postData.blocks[0]?.body || ''} />
+        {postData.mdxSource ? (
+          <CustomMDX mdxSource={postData.mdxSource} />
+        ) : (
+          <p>Error loading content or content is empty.</p>
+          // Or some other appropriate fallback if mdxSource is null/undefined
+          // This might happen if serialization failed on the server and API returned null for mdxSource
+        )}
       </article>
     </section>
   );

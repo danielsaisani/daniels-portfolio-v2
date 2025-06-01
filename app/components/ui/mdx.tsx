@@ -154,13 +154,35 @@ function createHeading(level) {
   };
 }
 
+let components = {
+  h1: createHeading(1),
+  h2: createHeading(2),
+  h3: createHeading(3),
+  h4: createHeading(4),
+  h5: createHeading(5),
+  h6: createHeading(6),
+  Image: RoundedImage,
+  a: CustomLink,
+  Callout,
+  ProsCard,
+  ConsCard,
+  StaticTweet: TweetComponent,
+  code: Code, // Using the simplified Code component
+  Table,
+  LiveCode,
+};
+
 export function CustomMDX(props) {
-  const minimalComponents = {}; // Use an empty object for now
-  const hardcodedSource = "# Hello World\n\nThis is a test.";
+  // The 'props' should contain mdxSource, and optionally 'components' for overrides
+  if (!props.mdxSource) {
+    // Or return a more specific error/fallback UI
+    return <p>Error: MDX content not available.</p>;
+  }
+
   return (
     <MDXRemote
-      source={hardcodedSource}
-      components={{ ...minimalComponents, ...(props.components || {}) }}
+      {...props.mdxSource} // Spread the serialized MDX object (e.g., compiledSource, frontmatter)
+      components={{ ...components, ...(props.components || {}) }} // Use the restored full 'components' map
     />
   );
 }

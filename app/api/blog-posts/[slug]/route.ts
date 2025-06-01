@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getBlogPosts, getBlogPost } from '@/app/db/blog'; // Adjust path if necessary
+import { serialize } from 'next-mdx-remote/serialize';
 
 // Define a simple Post type for what this API route returns
 // This should align with what BlogPostClientPage expects
@@ -41,16 +42,30 @@ export async function GET(
       return NextResponse.json({ message: `Data for post with slug '${slug}' could not be loaded.` }, { status: 404 });
     }
 
-    // 3. Construct the final Post object
+    // 3. Serialize MDX and construct the final Post object
+    let mdxSource = null;
+    const rawMdx = rawPostData.blocks && rawPostData.blocks[0] ? rawPostData.blocks[0].body : '';
+    if (rawMdx) {
+      try {
+        mdxSource = await serialize(rawMdx, {
+          // We can add mdxOptions for remark/rehype plugins here if needed later
+          // For now, parseFrontmatter defaults to false, which is fine if frontmatter is handled separately or not used in body
+        });
+      } catch (serializeError) {
+        console.error(`Error serializing MDX for slug '${slug}':`, serializeError);
+        // Decide how to handle serialization errors.
+        // For now, we'll let mdxSource remain null and the client can handle it.
+      }
+    }
+
     const finalPostData: Post = {
       ...rawPostData,
       blogId: blogMetaData.blogId,
       slug: blogMetaData.slug, // Ensure slug from metadata (which matches param) is used
-      // Ensure essential fields like title, publishedAt, blocks are part of finalPostData
-      // These should primarily come from rawPostData. Add fallbacks if necessary.
       title: rawPostData.title || "Untitled",
       publishedAt: rawPostData.publishedAt || new Date().toISOString(),
-      blocks: rawPostData.blocks || [],
+      // blocks: rawPostData.blocks || [], // Consider if this is still needed by client
+      mdxSource: mdxSource, // Add the serialized MDX source
     };
 
     return NextResponse.json(finalPostData);
