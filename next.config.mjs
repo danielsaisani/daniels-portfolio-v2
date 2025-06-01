@@ -10,6 +10,7 @@ const nextConfig = {
   // experimental: {
   //   ppr: false,
   // },
+  transpilePackages: ['next-mdx-remote'],
   async redirects() {
     if (!process.env.POSTGRES_URL) {
       return [];
@@ -38,11 +39,12 @@ const nextConfig = {
 const ContentSecurityPolicy = `
     default-src 'self' vercel.live;
     script-src 'self' 'unsafe-eval' 'unsafe-inline' cdn.vercel-insights.com vercel.live va.vercel-scripts.com;
-    style-src 'self' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    style-src-elem 'self' https://fonts.googleapis.com 'unsafe-inline';
     img-src * blob: data:;
     media-src 'none';
     connect-src *;
-    font-src 'self' data:;
+    font-src 'self' data: https://fonts.gstatic.com;
     frame-src 'self' *.codesandbox.io vercel.live;
 `;
 

@@ -1,14 +1,16 @@
 import { getBlogPosts } from 'app/db/blog';
 
 export default async function sitemap() {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
+
   // let blogs = (await getBlogPosts()).map((post) => ({
-  //   url: `https://danielsaisani.com/blog/${post.slug}`,
+  //   url: `${siteUrl}/blog/${post.slug}`,
   //   lastModified: post.publishedAt,
   // }));
 
   // '/blog',
   let routes = ['', '/guestbook', '/uses', '/work'].map((route) => ({
-    url: `https://danielsaisani.com${route}`,
+    url: `${siteUrl}${route}`,
     lastModified: new Date().toISOString().split('T')[0],
   }));
   // ...blogs

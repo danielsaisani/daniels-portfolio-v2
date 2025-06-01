@@ -1,3 +1,5 @@
+"use client"; // Add this line
+
 export default function ViewCounter({
   slug,
   allViews,

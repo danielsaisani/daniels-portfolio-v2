@@ -11,8 +11,10 @@ const inter = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL!),
+  metadataBase: new URL(siteUrl),
   title: {
     default: 'Daniel Saisani',
     template: '%s | Daniel Saisani',
@@ -21,11 +23,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Daniel Saisani',
     description: 'Engineer, innovator, and content creator.',
-    url: process.env.NEXT_PUBLIC_BASE_URL,
+    url: siteUrl,
     siteName: 'Daniel Saisani',
     locale: 'en_US',
     type: 'website',
-    images: ['https://www.danielsaisani.com/opengraph-image-v2.png'],
+    images: [`${siteUrl}/opengraph-image-v2.png`],
   },
   robots: {
     index: true,
@@ -71,7 +73,7 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
         <link rel="manifest" href="/img/site.webmanifest" />
-        <meta name="image" property="og:image" content="https://www.danielsaisani.com/opengraph-image.png"></meta>
+        {/* The standalone og:image meta tag is removed, relying on metadata.openGraph.images */}
         <SandpackCSS />
       </head>
       <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">

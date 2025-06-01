@@ -1,6 +1,8 @@
+"use client"; // Added
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { MDXRemote } from 'next-mdx-remote/rsc';
+import { MDXRemote } from 'next-mdx-remote'; // Changed from next-mdx-remote/rsc
 import { TweetComponent } from './tweet';
 import { highlight } from 'sugar-high';
 import React from 'react';
@@ -114,8 +116,13 @@ function ConsCard({ title, cons }) {
 }
 
 function Code({ children, ...props }) {
-  let codeHTML = highlight(children);
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
+  // Ensure children is a string, default to empty string if not
+  const codeContent = typeof children === 'string' ? children : '';
+  return (
+    <pre {...props}> {/* Use <pre> for semantic code blocks */}
+      <code>{codeContent}</code>
+    </pre>
+  );
 }
 
 function slugify(str) {
@@ -160,16 +167,22 @@ let components = {
   ProsCard,
   ConsCard,
   StaticTweet: TweetComponent,
-  code: Code,
+  code: Code, // Using the simplified Code component
   Table,
   LiveCode,
 };
 
 export function CustomMDX(props) {
+  // The 'props' should contain mdxSource, and optionally 'components' for overrides
+  if (!props.mdxSource) {
+    // Or return a more specific error/fallback UI
+    return <p>Error: MDX content not available.</p>;
+  }
+
   return (
     <MDXRemote
-      {...props}
-      components={{ ...components, ...(props.components || {}) }}
+      {...props.mdxSource} // Spread the serialized MDX object (e.g., compiledSource, frontmatter)
+      components={{ ...components, ...(props.components || {}) }} // Use the restored full 'components' map
     />
   );
 }
