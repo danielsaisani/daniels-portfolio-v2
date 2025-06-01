@@ -116,8 +116,13 @@ function ConsCard({ title, cons }) {
 }
 
 function Code({ children, ...props }) {
-  let codeHTML = highlight(children);
-  return <code dangerouslySetInnerHTML={{ __html: codeHTML }} {...props} />;
+  // Ensure children is a string, default to empty string if not
+  const codeContent = typeof children === 'string' ? children : '';
+  return (
+    <pre {...props}> {/* Use <pre> for semantic code blocks */}
+      <code>{codeContent}</code>
+    </pre>
+  );
 }
 
 function slugify(str) {
