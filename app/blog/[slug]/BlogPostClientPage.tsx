@@ -152,12 +152,12 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
         {postData.title}
       </h1>
       <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="text-sm">
           {formatDate(postData.publishedAt)}
         </p>
         <ClientViews slug={postData.slug} />
       </div>
-      <article className="prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
+      <article className="text-light prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
         {postData.mdxSource ? (
           <CustomMDX mdxSource={postData.mdxSource} />
         ) : (
