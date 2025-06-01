@@ -2,7 +2,7 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 
 export default function BlogPostSkeleton() {
   return (
-    <section>
+    <section style={{ backgroundColor: 'lime', padding: '20px', border: '5px solid red' }}>
       {/* Title Skeleton */}
       <Skeleton className="h-8 w-3/4 mb-4 rounded-lg" />
 
