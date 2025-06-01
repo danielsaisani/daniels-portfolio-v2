@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote';
 import { getBlogPosts, getBlogPost } from '@/app/db/blog'; // Adjust path if necessary
 import { serialize } from 'next-mdx-remote/serialize';
 
@@ -43,7 +44,7 @@ export async function GET(
     }
 
     // 3. Serialize MDX and construct the final Post object
-    let mdxSource = null;
+    let mdxSource: MDXRemoteSerializeResult | null = null;
     const rawMdx = rawPostData.blocks && rawPostData.blocks[0] ? rawPostData.blocks[0].body : '';
     if (rawMdx) {
       try {
