@@ -5,7 +5,7 @@
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
 - **Analytics**: [Vercel Analytics](https://vercel.com/analytics)
 
-## Running Locally
+## Requirements
 This application requires Node.js v18.17+.
 
 ## Database Schema
