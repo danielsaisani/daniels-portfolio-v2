@@ -156,9 +156,10 @@ function createHeading(level) {
 
 export function CustomMDX(props) {
   const minimalComponents = {}; // Use an empty object for now
+  const hardcodedSource = "# Hello World\n\nThis is a test.";
   return (
     <MDXRemote
-      {...props}
+      source={hardcodedSource}
       components={{ ...minimalComponents, ...(props.components || {}) }}
     />
   );
