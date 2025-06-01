@@ -155,7 +155,7 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
         <ClientViews slug={postData.slug} />
       </div>
       <article className="prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
-        <CustomMDX source={postData.blocks[0]?.body || ''} />
+        <div>MDX Content Placeholder</div> {/* <CustomMDX source={postData.blocks[0]?.body || ''} /> */}
       </article>
     </section>
   );
