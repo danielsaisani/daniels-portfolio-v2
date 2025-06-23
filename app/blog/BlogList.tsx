@@ -3,13 +3,8 @@
 import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/app/components/ui/skeleton';
-import ViewCounter from './view-counter'; // Corrected import path
-import { LottieAnimation } from '@/app/components/ui/lottie'; // Added LottieAnimation import
-// Assuming the path for your Lottie JSON, adjust if necessary
-// import animationData from '@/public/lottie/blog-animation.json'; 
-
-// Interfaces
-// This interface matches the structure returned by our /api/blogs endpoint
+import ViewCounter from './view-counter';
+import { LottieAnimation } from '@/app/components/ui/lottie';
 interface ApiPost {
   id: number; // Strapi's numeric primary key
   documentId: string; // Strapi's UID field (e.g., for querying by a consistent string ID)
@@ -20,8 +15,6 @@ interface ApiPost {
   // For example: description, content, date, image, etc.
 }
 
-// For client-side state, we can use a slightly more specific type if needed,
-// but ApiPost might be sufficient. Let's define them for clarity.
 interface PublishedPost extends ApiPost {
   publishedAt: string; // Ensure publishedAt is a string for published posts
 }
@@ -35,11 +28,6 @@ interface ViewCount {
   slug: string;
   count: number;
 }
-
-// Define the props for BlogList component
-// interface BlogListProps { // Removed allViews, so props interface is no longer needed if empty
-//   allViews: ViewCount[];
-// }
 
 export default function BlogList(/* { allViews }: BlogListProps */) { // Removed allViews from props
   const [posts, setPosts] = useState<PublishedPost[]>([]);
@@ -57,57 +45,57 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
           fetch('/api/blogs'), // Fetches published posts (or all if not filtered by API)
           fetch('/api/blogs?status=draft') // Fetches draft posts
         ]);
-  
+
         if (!publishedResponse.ok || !draftResponse.ok) {
           let errorMsg = 'Failed to fetch blog data.';
           if (!publishedResponse.ok) {
-              // Try to parse error, default to statusText if parsing fails or no specific error field
-              const presErrorBody = await publishedResponse.json().catch(() => null);
-              const presErrorDetail = presErrorBody?.error || publishedResponse.statusText;
-              errorMsg += ` Published endpoint error: ${publishedResponse.status} ${presErrorDetail}.`;
+            // Try to parse error, default to statusText if parsing fails or no specific error field
+            const presErrorBody = await publishedResponse.json().catch(() => null);
+            const presErrorDetail = presErrorBody?.error || publishedResponse.statusText;
+            errorMsg += ` Published endpoint error: ${publishedResponse.status} ${presErrorDetail}.`;
           }
           if (!draftResponse.ok) {
-              const dresErrorBody = await draftResponse.json().catch(() => null);
-              const dresErrorDetail = dresErrorBody?.error || draftResponse.statusText;
-              errorMsg += ` Draft endpoint error: ${draftResponse.status} ${dresErrorDetail}.`;
+            const dresErrorBody = await draftResponse.json().catch(() => null);
+            const dresErrorDetail = dresErrorBody?.error || draftResponse.statusText;
+            errorMsg += ` Draft endpoint error: ${draftResponse.status} ${dresErrorDetail}.`;
           }
           throw new Error(errorMsg);
         }
-  
+
         const publishedResult = await publishedResponse.json();
         const draftResult = await draftResponse.json();
-  
+
         // Assuming the API returns data in result.response.data structure
         // Changed from response?.data to response.data as per prompt
-        const fetchedPublishedPosts: ApiPost[] = publishedResult.response.data || []; 
+        const fetchedPublishedPosts: ApiPost[] = publishedResult.response.data || [];
         const fetchedDraftPosts: ApiPost[] = draftResult.response.data || [];
-  
+
         // Filter and set the published posts
         // Ensure publishedAt is valid for PublishedPost type and not in the future.
         const validPublishedPosts = fetchedPublishedPosts.filter(
           p => p.publishedAt && new Date(p.publishedAt) <= new Date()
         );
         setPosts(validPublishedPosts.map(p => ({ ...p, publishedAt: p.publishedAt! })));
-        
-  
+
+
         // Determine "Coming Soon" posts
         // Create a Set of documentIds from validPublishedPosts for efficient lookup.
         // Changed from p.id to p.documentId
-        const publishedDocumentIds = new Set(validPublishedPosts.map(p => p.documentId)); 
-  
+        const publishedDocumentIds = new Set(validPublishedPosts.map(p => p.documentId));
+
         const actualComingSoonPosts = fetchedDraftPosts.filter(draftPost => {
           // Condition 1: `publishedAt` is falsy (null, undefined, empty string)
           const isPublishedAtFalsy = !draftPost.publishedAt;
           // Condition 2: The post is not already in the list of published IDs.
           // Changed from draftPost.id to draftPost.documentId
-          const notInPublished = !publishedDocumentIds.has(draftPost.documentId); 
-  
+          const notInPublished = !publishedDocumentIds.has(draftPost.documentId);
+
           return isPublishedAtFalsy && notInPublished;
         });
-        
+
         // Ensure publishedAt is explicitly null for UpcomingPost type.
         setComingSoonPosts(actualComingSoonPosts.map(p => ({ ...p, publishedAt: null })));
-  
+
         // Fetch all views data after successfully fetching posts
         try {
           const viewsResponse = await fetch('/api/views/all');
@@ -129,7 +117,7 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
 
         // Clear any previous main error messages on successful fetch of posts
         setError(null);
-  
+
       } catch (err) {
         console.error("Error fetching blog data:", err);
         setError(err instanceof Error ? err.message : 'An unknown error occurred.');
@@ -140,7 +128,7 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
         setIsLoading(false);
       }
     };
-  
+
     fetchBlogData();
   }, []);
 
@@ -151,13 +139,13 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
           // Container for each skeleton item. No animate-pulse here.
           <div key={i} className="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
             {/* Title Skeleton: Added rounded-lg, opacity-75, and specific bg colors */}
-            <Skeleton className="h-6 w-3/4 mb-3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
+            <Skeleton className="h-6 w-3/4 mb-3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" />
             {/* Metadata Line Skeleton (Date + ViewCounter) */}
             <div className="flex justify-between items-center mt-2">
               {/* Date part: Added rounded-lg, opacity-75, and specific bg colors */}
-              <Skeleton className="h-4 w-1/3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
+              <Skeleton className="h-4 w-1/3 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" />
               {/* ViewCounter part: Added rounded-lg, opacity-75, and specific bg colors */}
-              <Skeleton className="h-4 w-1/4 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" /> 
+              <Skeleton className="h-4 w-1/4 rounded-lg opacity-75 bg-gray-300 dark:bg-gray-700" />
             </div>
           </div>
         ))}
@@ -171,7 +159,6 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-4">Published Posts</h2>
       {posts.length > 0 ? (
         <ul className="space-y-4">
           {posts.map((post) => (
@@ -201,9 +188,9 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
       <h2 className="text-2xl font-bold mt-8 mb-4">Coming Soon</h2>
       {comingSoonPosts.length > 0 ? (
         // Changed ul to div, Link items will manage their own margins
-        <div> 
+        <div>
           {comingSoonPosts.map((post) => (
-            <Link 
+            <Link
               key={post.documentId || post.id} // Changed key to use documentId or numeric id
               href={`/blog`} // Links to the main blog page
               className="flex flex-col space-y-1 mb-4" // Styling from prompt
@@ -215,7 +202,6 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
                 <Suspense fallback={<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>}> {/* Fallback from prompt, removed animate-pulse as not specified */}
                   <LottieAnimation width={30} height={30} type={'writing'} />
                 </Suspense>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Coming Soon...</p> {/* Added mt-1 for spacing similar to published posts */}
               </div>
             </Link>
           ))}
