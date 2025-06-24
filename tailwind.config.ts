@@ -9,9 +9,11 @@ export default {
 			colors: {
 				dark: '#191516',
 				light: '#E6E8E6',
-				primary: '#512888',
-				secondary: '#062A77',
-				tertiary: '#B11225'
+				navy: '#355070',
+				purple: '#6D597A',
+				plum: '#B56576',
+				brightRed: '#E56B6F',
+				peach: '#EAAC8B',
 			},
 			keyframes: {
 				fadeIn: {

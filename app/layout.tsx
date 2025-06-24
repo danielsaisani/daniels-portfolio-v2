@@ -74,15 +74,14 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
         <link rel="manifest" href="/img/site.webmanifest" />
-        {/* The standalone og:image meta tag is removed, relying on metadata.openGraph.images */}
         <SandpackCSS />
       </head>
-      <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
+      <body className="max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
         <LenisProvider>
           <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 gap-20">
             <Navbar />
             {children}
-            <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
+            <div className="fixed bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
             <Analytics />
             <SpeedInsights />
           </main>

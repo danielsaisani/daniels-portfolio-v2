@@ -39,7 +39,7 @@ async function GuestbookForm() {
     </>
   ) : (
     <>
-      {DISABLE_ADD_GUESTBOOOK_FORM && <div className='rounded-md bg-tertiary p-2 flex justify-center items-center space-x-2'><TriangleAlert/><span className='text-white'>Guestbook Temporarily Disabled</span></div>}
+      {DISABLE_ADD_GUESTBOOOK_FORM && <div className='rounded-md bg-tertiary p-2 flex justify-center items-center space-x-2'><TriangleAlert /><span className='text-white'>Guestbook Temporarily Disabled</span></div>}
       {!DISABLE_ADD_GUESTBOOOK_FORM && <SignIn />}
     </>
   );

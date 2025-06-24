@@ -1,9 +1,6 @@
 "use client"
 
 import React, { useEffect, useState } from "react";
-import { Image } from "@nextui-org/react";
-import { LottieAnimation } from "./ui/lottie";
-import { motion, AnimatePresence } from "framer-motion";
 
 const Hero: React.FC = () => {
 
