@@ -1,18 +1,22 @@
-"use client"; // Added
+"use client";
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { MDXRemote } from 'next-mdx-remote'; // Changed from next-mdx-remote/rsc
+import { MDXRemote } from 'next-mdx-remote';
 import { TweetComponent } from './tweet';
-import { highlight } from 'sugar-high';
 import React from 'react';
 import { LiveCode } from './sandpack';
 
-function Table({ data }) {
-  let headers = data.headers.map((header, index) => (
+type TableData = {
+  headers: string[];
+  rows: (string | number | React.ReactNode)[][];
+};
+
+function Table({ data }: { data: TableData }) {
+  let headers = data.headers.map((header: string, index: number) => (
     <th key={index}>{header}</th>
   ));
-  let rows = data.rows.map((row, index) => (
+  let rows = data.rows.map((row: (string | number | React.ReactNode)[], index: number) => (
     <tr key={index}>
       {row.map((cell, cellIndex) => (
         <td key={cellIndex}>{cell}</td>
@@ -30,12 +34,18 @@ function Table({ data }) {
   );
 }
 
-function CustomLink(props) {
+type CustomLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  href: string;
+  children?: React.ReactNode;
+};
+
+function CustomLink(props: CustomLinkProps) {
   let href = props.href;
 
   if (href.startsWith('/')) {
+    const { href, ...rest } = props;
     return (
-      <Link href={href} {...props}>
+      <Link href={href} {...rest}>
         {props.children}
       </Link>
     );
@@ -48,11 +58,20 @@ function CustomLink(props) {
   return <a target="_blank" rel="noopener noreferrer" {...props} />;
 }
 
-function RoundedImage(props) {
-  return <Image alt={props.alt} className="rounded-lg" {...props} />;
+type RoundedImageProps = React.ComponentProps<typeof Image> & {
+  alt: string;
+};
+
+function RoundedImage(props: RoundedImageProps) {
+  return <Image className="rounded-lg" {...props} />;
 }
 
-function Callout(props) {
+type CalloutProps = {
+  emoji: React.ReactNode;
+  children: React.ReactNode;
+};
+
+function Callout(props: CalloutProps) {
   return (
     <div className="px-4 py-3 border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 rounded p-1 text-sm flex items-center text-neutral-900 dark:text-neutral-100 mb-8">
       <div className="flex items-center w-4 mr-4">{props.emoji}</div>
@@ -61,7 +80,12 @@ function Callout(props) {
   );
 }
 
-function ProsCard({ title, pros }) {
+type ProsCardProps = {
+  title: string;
+  pros: string[];
+};
+
+function ProsCard({ title, pros }: ProsCardProps) {
   return (
     <div className="border border-emerald-200 dark:border-emerald-900 bg-neutral-50 dark:bg-neutral-900 rounded-xl p-6 my-4 w-full">
       <span>{`You might use ${title} if...`}</span>
@@ -90,7 +114,12 @@ function ProsCard({ title, pros }) {
   );
 }
 
-function ConsCard({ title, cons }) {
+type ConsCardProps = {
+  title: string;
+  cons: string[];
+};
+
+function ConsCard({ title, cons }: ConsCardProps) {
   return (
     <div className="border border-red-200 dark:border-red-900 bg-neutral-50 dark:bg-neutral-900 rounded-xl p-6 my-6 w-full">
       <span>{`You might not use ${title} if...`}</span>
@@ -115,7 +144,9 @@ function ConsCard({ title, cons }) {
   );
 }
 
-function Code({ children, ...props }) {
+type CodeProps = React.PropsWithChildren<React.HTMLAttributes<HTMLPreElement>>;
+
+function Code({ children, ...props }: CodeProps) {
   // Ensure children is a string, default to empty string if not
   const codeContent = typeof children === 'string' ? children : '';
   return (
@@ -125,7 +156,8 @@ function Code({ children, ...props }) {
   );
 }
 
-function slugify(str) {
+// Explicitly type the parameter for better type safety and clarity
+function slugify(str: string) {
   return str
     .toString()
     .toLowerCase()
@@ -136,9 +168,19 @@ function slugify(str) {
     .replace(/\-\-+/g, '-'); // Replace multiple - with single -
 }
 
-function createHeading(level) {
-  return ({ children }) => {
-    let slug = slugify(children);
+// Explicitly type the parameter for better type safety and clarity
+function createHeading(level: number) {
+  return ({ children }: { children: React.ReactNode }) => {
+    // Convert children to string for slugification (handles string or array of strings)
+    const text =
+      typeof children === 'string'
+        ? children
+        : Array.isArray(children)
+          ? children.join('')
+          : '';
+
+    let slug = slugify(text);
+
     return React.createElement(
       `h${level}`,
       { id: slug },
@@ -172,7 +214,12 @@ let components = {
   LiveCode,
 };
 
-export function CustomMDX(props) {
+interface CustomMDXProps {
+  mdxSource: any; // You can replace 'any' with a more specific type if available
+  components?: Record<string, React.ComponentType<any>>;
+}
+
+export function CustomMDX(props: CustomMDXProps) {
   // The 'props' should contain mdxSource, and optionally 'components' for overrides
   if (!props.mdxSource) {
     // Or return a more specific error/fallback UI

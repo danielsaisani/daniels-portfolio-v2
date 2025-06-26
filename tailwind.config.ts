@@ -70,14 +70,5 @@ export default {
 	},
 	plugins: [
 		typography,
-		function ({ addUtilities }) {
-			const newUtilities = {
-				'.flashing-caret': {
-					'border-right': '1.5px solid',
-					'padding-right': '2px',
-				},
-			}
-			addUtilities(newUtilities, ['responsive', 'hover'])
-		},
 	],
 } satisfies Config;

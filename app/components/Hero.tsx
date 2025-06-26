@@ -13,7 +13,7 @@ const Hero: React.FC = () => {
     const [isTypingComplete, setIsTypingComplete] = useState(false);
     const [isFullStackTypingComplete, setIsFullStackTypingComplete] = useState(false);
     useEffect(() => {
-        let timer;
+        let timer: string | number | NodeJS.Timeout | undefined;
         if (displayedText.length < text.length) {
             timer = setTimeout(() => {
                 setDisplayedText(text.slice(0, displayedText.length + 1));
@@ -25,7 +25,7 @@ const Hero: React.FC = () => {
     }, [displayedText, text, typingSpeed1]);
 
     useEffect(() => {
-        let timer;
+        let timer: string | number | NodeJS.Timeout | undefined;
         if (fullStackText.length < fullStackTextOriginal.length && isTypingComplete) {
             timer = setTimeout(() => {
                 setFullStackDisplayedText(fullStackTextOriginal.slice(0, fullStackText.length + 1));

@@ -50,5 +50,8 @@
   },
   "prettier": {
     "singleQuote": true
+  },
+  "devDependencies": {
+    "@types/three": "^0.177.0"
   }
 }

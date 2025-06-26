@@ -162,13 +162,13 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
       {posts.length > 0 ? (
         <ul className="space-y-4">
           {posts.map((post) => (
-            <li key={post.id} className="p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-dark transition-colors">
+            <li key={post.id} className="p-4 border-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-dark transition-colors">
               <Link href={`/blog/${post.slug}`} className="block">
                 {/* Changed dark mode title color to white */}
                 <h3 className="text-xl font-semibold dark:text-white">{post.title}</h3>
                 {/* Changed dark mode secondary text color to gray-300 */}
                 <div className="text-sm text-gray-500 dark:text-gray-300 mt-1 flex justify-between items-center">
-                  <span>Published on: {new Date(post.publishedAt).toLocaleDateString()}</span>
+                  <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
                   {/* Ensure ViewCounter is only rendered for posts with a slug */}
                   {post.slug && (
                     <Suspense fallback={<div className="h-5 w-16 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
@@ -195,7 +195,7 @@ export default function BlogList(/* { allViews }: BlogListProps */) { // Removed
               href={`/blog`} // Links to the main blog page
               className="flex flex-col space-y-1 mb-4" // Styling from prompt
             >
-              <div className="w-full flex flex-col hover:bg-gray-100 hover:translate-x-1 hover:bg-opacity-10 dark:hover:bg-gray-800 duration-200 rounded-md p-4 opacity-70">
+              <div className="w-full flex flex-col hover:bg-gray-50 hover:bg-opacity-10 dark:hover:bg-gray-800 duration-200 rounded-md p-4 opacity-70">
                 <p className="dark:text-neutral-100 tracking-tight">
                   {post.title}
                 </p>

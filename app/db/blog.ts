@@ -63,12 +63,19 @@ type BlogResponse = {
 
 // This function is not directly using axios, so it's not modified for API base URL or detailed logging here.
 // If it were to be used by external callers needing configurable base URLs, it would need changes.
-function extractTweetIds(content) {
-  let tweetMatches = content.match(/<StaticTweet\sid="[0-9]+"\s\/>/g);
-  return tweetMatches?.map((tweet) => tweet.match(/[0-9]+/g)[0]) || [];
+function extractTweetIds(content: string): string[] {
+  // Find all <StaticTweet id="..."/> tags in the content
+  const tweetMatches = content.match(/<StaticTweet\sid="[0-9]+"\s\/>/g) || [];
+  // Extract the numeric ID from each match, filter out any nulls just in case
+  return tweetMatches
+    .map((tweet) => {
+      const idMatch = tweet.match(/[0-9]+/g);
+      return idMatch ? idMatch[0] : null;
+    })
+    .filter((id): id is string => id !== null);
 }
 
-async function getBlog(blogId) {
+async function getBlog(blogId: string) {
   const apiBaseUrl = process.env.BLOG_API_BASE_URL || 'https://danielsaisani.com';
   let queryParams = new URLSearchParams({ documentId: blogId });
   const url = `${apiBaseUrl}/api/blogs?${queryParams.toString()}`;
@@ -104,10 +111,10 @@ async function getAllBlogs() {
     const allBlogsResponse = await axios.get(url);
     console.log(`[getAllBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
     if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-        return allBlogsResponse.data as BlogsResponse;
+      return allBlogsResponse.data as BlogsResponse;
     } else {
-        console.warn(`[getAllBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-        return { response: { data: [] } };
+      console.warn(`[getAllBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
+      return { response: { data: [] } };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -128,10 +135,10 @@ async function getAllUnpublishedBlogs() {
     const allBlogsResponse = await axios.get(url);
     console.log(`[getAllUnpublishedBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
     if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-        return allBlogsResponse.data as UnpublishedBlogsResponse;
+      return allBlogsResponse.data as UnpublishedBlogsResponse;
     } else {
-        console.warn(`[getAllUnpublishedBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-        return { response: { data: [] } };
+      console.warn(`[getAllUnpublishedBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
+      return { response: { data: [] } };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -192,7 +199,7 @@ async function getAllBlogData() {
   return data;
 }
 
-async function getBlogData(blogId) {
+async function getBlogData(blogId: string) {
   console.log(`[getBlogData] Getting full blog data for blogId: ${blogId}`);
   let blogObject = await getBlog(blogId);
 
@@ -227,7 +234,7 @@ export async function getUnpublishedBlogPosts() {
   }
 }
 
-export async function getBlogPost(blogId) {
+export async function getBlogPost(blogId: string) {
   console.log(`[getBlogPost] External API: Fetching specific blog post for blogId: ${blogId}`);
   try {
     const blog = await getBlogData(blogId);
