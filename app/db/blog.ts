@@ -1,12 +1,5 @@
 import axios from 'axios';
 
-// Type definitions (assuming these are correct and don't need changes for this subtask)
-type Metadata = {
-  title: string;
-  publishedAt: string;
-  summary: string;
-  image?: string;
-};
 
 type Blog = {
   id: number;
@@ -61,14 +54,7 @@ type BlogResponse = {
   }
 }
 
-// This function is not directly using axios, so it's not modified for API base URL or detailed logging here.
-// If it were to be used by external callers needing configurable base URLs, it would need changes.
-function extractTweetIds(content) {
-  let tweetMatches = content.match(/<StaticTweet\sid="[0-9]+"\s\/>/g);
-  return tweetMatches?.map((tweet) => tweet.match(/[0-9]+/g)[0]) || [];
-}
-
-async function getBlog(blogId) {
+async function getBlog(blogId: string) {  
   const apiBaseUrl = process.env.BLOG_API_BASE_URL || 'https://danielsaisani.com';
   let queryParams = new URLSearchParams({ documentId: blogId });
   const url = `${apiBaseUrl}/api/blogs?${queryParams.toString()}`;
@@ -77,12 +63,10 @@ async function getBlog(blogId) {
   try {
     const blogResponse = await axios.get(url);
     console.log(`[getBlog] Successfully fetched from: ${url}. Status: ${blogResponse.status}`);
-    // It's good practice to check response structure if it can vary
     if (blogResponse.data && blogResponse.data.response && blogResponse.data.response.data !== undefined) {
       return blogResponse.data as BlogResponse;
     } else {
       console.warn(`[getBlog] Unexpected response structure from ${url}:`, JSON.stringify(blogResponse.data, null, 2));
-      // Return null or a custom error object that matches expected error structure
       return { response: { data: null } };
     }
   } catch (error) {
@@ -91,7 +75,7 @@ async function getBlog(blogId) {
     } else {
       console.error(`[getBlog] Generic error fetching ${url}:`, error);
     }
-    return { response: { data: null } }; // Ensure consistent error response structure
+    return { response: { data: null } };
   }
 }
 
@@ -104,10 +88,10 @@ async function getAllBlogs() {
     const allBlogsResponse = await axios.get(url);
     console.log(`[getAllBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
     if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-        return allBlogsResponse.data as BlogsResponse;
+      return allBlogsResponse.data as BlogsResponse;
     } else {
-        console.warn(`[getAllBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-        return { response: { data: [] } };
+      console.warn(`[getAllBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
+      return { response: { data: [] } };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -128,10 +112,10 @@ async function getAllUnpublishedBlogs() {
     const allBlogsResponse = await axios.get(url);
     console.log(`[getAllUnpublishedBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
     if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-        return allBlogsResponse.data as UnpublishedBlogsResponse;
+      return allBlogsResponse.data as UnpublishedBlogsResponse;
     } else {
-        console.warn(`[getAllUnpublishedBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-        return { response: { data: [] } };
+      console.warn(`[getAllUnpublishedBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
+      return { response: { data: [] } };
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -142,8 +126,6 @@ async function getAllUnpublishedBlogs() {
     return { response: { data: [] } }; // Ensure consistent error response structure
   }
 }
-
-// Functions below this line call the ones above, so they benefit from the logging and env var usage indirectly.
 
 async function getAllUnpublishedBlogData() {
   console.log('[getAllUnpublishedBlogData] Starting...');
@@ -192,7 +174,7 @@ async function getAllBlogData() {
   return data;
 }
 
-async function getBlogData(blogId) {
+async function getBlogData(blogId: string) {
   console.log(`[getBlogData] Getting full blog data for blogId: ${blogId}`);
   let blogObject = await getBlog(blogId);
 
@@ -227,7 +209,7 @@ export async function getUnpublishedBlogPosts() {
   }
 }
 
-export async function getBlogPost(blogId) {
+export async function getBlogPost(blogId: string) {
   console.log(`[getBlogPost] External API: Fetching specific blog post for blogId: ${blogId}`);
   try {
     const blog = await getBlogData(blogId);

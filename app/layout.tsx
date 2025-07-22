@@ -5,8 +5,9 @@ import { Navbar } from './components/ui/nav';
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { SandpackCSS } from './blog/[slug]/sandpack';
+import LenisProvider from './components/LenisProvider';
 
-const inter = Poppins({
+const poppins = Poppins({
   subsets: ["latin"],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
@@ -50,7 +51,7 @@ export const metadata: Metadata = {
   },
 };
 
-const cx = (...classes) => classes.filter(Boolean).join(' ');
+const cx = (...classes: string[]) => classes.filter(Boolean).join(' ');
 
 export default function RootLayout({
   children,
@@ -64,7 +65,7 @@ export default function RootLayout({
       lang="en"
       className={cx(
         'text-light bg-dark no-scrollbar',
-        inter.className,
+        poppins.className,
       )}
     >
       <head>
@@ -73,17 +74,18 @@ export default function RootLayout({
         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png" />
         <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png" />
         <link rel="manifest" href="/img/site.webmanifest" />
-        {/* The standalone og:image meta tag is removed, relying on metadata.openGraph.images */}
         <SandpackCSS />
       </head>
-      <body className="antialiased max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
-        <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 gap-20">
-          <Navbar />
-          {children}
-          <div className="fixed bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
-          <Analytics />
-          <SpeedInsights />
-        </main>
+      <body className="max-w-2xl flex flex-col md:flex-row mx-4 mt-8 lg:mx-auto">
+        <LenisProvider>
+          <main className="flex-auto min-w-0 flex flex-col px-2 md:px-0 gap-20">
+            <Navbar />
+            {children}
+            <div className="fixed bottom-0 left-0 right-0 h-10 bg-gradient-to-t from-dark to-transparent pointer-events-none"></div>
+            <Analytics />
+            <SpeedInsights />
+          </main>
+        </LenisProvider>
       </body>
     </html>
   );

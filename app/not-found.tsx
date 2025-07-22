@@ -10,7 +10,7 @@ export default function NotFound() {
     <div className="min-h-screen flex items-center justify-center px-4 bg-transparent">
       <div className="max-w-md w-full text-center">
         <div className="mb-6">
-          <h2 className="text-8xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 text-transparent bg-clip-text animate-gradient">
+          <h2 className="text-8xl font-bold bg-gradient-to-r bg-white text-transparent bg-clip-text animate-gradient">
             404
           </h2>
         </div>
@@ -18,7 +18,7 @@ export default function NotFound() {
         <h1 className="text-3xl font-bold text-white mb-4">
           Page Not Found
         </h1>
-        
+
         <p className="text-white mb-2">
           Sorry, we couldn't find the page you're looking for.
         </p>
@@ -36,7 +36,7 @@ export default function NotFound() {
           </button>
           <button
             onClick={() => router.push('/')}
-            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-500 hover:to-blue-400 transition-all hover:shadow-md"
+            className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r bg-white text-gray-700 rounded-xl transition-all hover:shadow-md"
           >
             <Home className="w-5 h-5 mr-2" />
             Return Home
