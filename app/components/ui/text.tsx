@@ -18,7 +18,7 @@ const TypingText: React.FC<TypingTextProps> = ({
     caretStyle = {},
 }) => {
     const [displayedText, setDisplayedText] = useState('');
-
+    
     useEffect(() => {
         let timer: string | number | NodeJS.Timeout | undefined;
         if (displayedText.length < text.length) {
@@ -30,7 +30,7 @@ const TypingText: React.FC<TypingTextProps> = ({
         }
         return () => clearTimeout(timer);
     }, [displayedText, text, typingSpeed, onComplete]);
-
+    
     return (
         <span className={className}>
             {displayedText}

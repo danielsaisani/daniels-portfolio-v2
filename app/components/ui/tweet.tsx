@@ -6,10 +6,8 @@ import {
   TweetSkeleton,
   EmbeddedTweet,
   TweetNotFound,
-  type TweetProps // Keep if used for props typing
-  // Remove 'type Tweet as TweetData' or 'type Tweet' if it was explicitly imported for useState before
+  type TweetProps
 } from 'react-tweet';
-import './tweet.css';
 
 // Infer the type of the tweet data from the getTweet function
 // This creates a type that matches exactly what getTweet returns (Tweet | undefined)
@@ -79,10 +77,12 @@ export const ReactTweet = (props: TweetProps) => {
   return <TweetContentInternal {...props} />;
 };
 
+// Removed custom TweetP, TweetA, TweetMediaWrapper, TweetLinkDiv components (not supported by react-tweet)
+
 export function TweetComponent({ id }: { id: string }) {
   return (
-    <div className="tweet my-6">
-      <div className={`flex justify-center`}>
+    <div className="my-6"> {/* Removed 'tweet' class, only margin needed */}
+      <div className="flex justify-center"> {/* Center the tweet */}
         <ReactTweet id={id} />
       </div>
     </div>

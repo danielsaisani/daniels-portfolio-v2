@@ -69,3 +69,22 @@ export function ComingSoonCard({
     </Card>
   );
 }
+
+interface ClickyCardProps {
+  children?: React.ReactNode
+  type: "primary" | "secondary" | "tertiary"
+}
+
+export const ClickyCard = ({ children, type }: ClickyCardProps) => {
+  return (
+    <Card
+      className={`
+        flex items-center rounded-2xl
+        hover:shadow-[0_10px_0_0] hover:shadow-${type}
+        hover:-translate-y-2 shadow-none duration-300 bg-light
+      `}
+    >
+      {children}
+    </Card>
+  );
+}

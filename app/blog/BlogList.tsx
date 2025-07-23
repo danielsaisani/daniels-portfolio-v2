@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import ViewCounter from './view-counter';
-import { LottieAnimation } from '@/app/components/ui/lottie';
+import { LottieAnimation } from '@/app/components/ui/animation';
 import { BlogCard, ComingSoonCard } from '@/app/components/ui/cards';
 interface ApiPost {
   id: number;
