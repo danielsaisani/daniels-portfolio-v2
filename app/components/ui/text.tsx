@@ -7,6 +7,7 @@ interface TypingTextProps {
     onComplete?: () => void;
     caretClassName?: string;
     caretStyle?: React.CSSProperties;
+    children?: React.ReactNode;
 }
 
 const TypingText: React.FC<TypingTextProps> = ({
@@ -16,29 +17,62 @@ const TypingText: React.FC<TypingTextProps> = ({
     onComplete,
     caretClassName = '',
     caretStyle = {},
+    children,
 }) => {
     const [displayedText, setDisplayedText] = useState('');
+    const [isTyping, setIsTyping] = useState(true);
+
+    let symbol: React.ReactNode = null;
+    let content = text;
+
+    if (text.startsWith('[X] ')) {
+        symbol = <span className="mr-2">⊗</span>;
+        content = text.substring(4);
+    } else if (text.startsWith('[ ] ')) {
+        symbol = <span className="mr-2">•</span>;
+        content = text.substring(4);
+    } else if (text.startsWith('o ')) {
+        symbol = <span className="mr-2">○</span>;
+        content = text.substring(2);
+    } else if (text.startsWith('!- ')) {
+        symbol = <span className="mr-2">!-</span>;
+        content = text.substring(3);
+    } else if (text.startsWith('- ')) {
+        symbol = <span className="mr-2">-</span>;
+        content = text.substring(2);
+    }
     
     useEffect(() => {
-        let timer: string | number | NodeJS.Timeout | undefined;
-        if (displayedText.length < text.length) {
+        let timer: NodeJS.Timeout;
+        if (displayedText.length < content.length) {
             timer = setTimeout(() => {
-                setDisplayedText(text.slice(0, displayedText.length + 1));
+                setDisplayedText(content.slice(0, displayedText.length + 1));
             }, typingSpeed);
-        } else if (displayedText.length === text.length && onComplete) {
-            onComplete();
+        } else {
+            setIsTyping(false);
+            if (onComplete) {
+                onComplete();
+            }
         }
         return () => clearTimeout(timer);
-    }, [displayedText, text, typingSpeed, onComplete]);
+    }, [displayedText, content, typingSpeed, onComplete]);
     
     return (
-        <span className={className}>
-            {displayedText}
-            <span
-                className={`w-[2px] h-[1.2em] bg-white ml-[2px] animate-caret ${caretClassName}`}
-                style={caretStyle}
-            ></span>
-        </span>
+        <div className={className}>
+            <div className="flex items-start">
+                {symbol ? <span className="w-6 text-center">{symbol}</span> : null}
+                <span>
+                    {displayedText}
+                    {isTyping && (
+                        <span
+                            className={`w-[2px] h-[1.2em] bg-white ml-[2px] animate-caret ${caretClassName}`}
+                            style={caretStyle}
+                        ></span>
+                    )}
+                </span>
+            </div>
+            {!isTyping && children && <div className="pl-6">{children}</div>}
+        </div>
     );
 };
 
