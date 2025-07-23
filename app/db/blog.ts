@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-
+// Type Definitions
 type Blog = {
   id: number;
   documentId: string;
@@ -10,212 +10,147 @@ type Blog = {
   publishedAt: string;
   updatedAt: string;
   blocks: { body: string }[];
-  title: string
-}
+  title: string;
+};
 
-type BlogMetaData = {
-  id: number;
-  documentId: string;
-  slug: string;
-  description: string | null;
-  author: { name: string };
-  publishedAt: string;
-  updatedAt: string;
-  title: string
-}
+type BlogMetaData = Omit<Blog, 'blocks'>;
 
-type UnpublishedBlog = {
-  id: number;
-  documentId: string;
-  slug: string;
-  description: string | null;
-  author: { name: string };
-  updatedAt: string;
+type UnpublishedBlog = Omit<Blog, 'blocks'> & {
   publishedAt: string | null;
   blocks: { body: string }[] | null;
-  title: string
-}
+};
 
 type UnpublishedBlogsResponse = {
   response: {
-    data: UnpublishedBlog[]
-  }
-}
+    data: UnpublishedBlog[];
+  };
+};
 
 type BlogsResponse = {
   response: {
-    data: BlogMetaData[]
-  }
-}
+    data: BlogMetaData[];
+  };
+};
 
 type BlogResponse = {
   response: {
-    data: Blog
-  }
-}
+    data: Blog;
+  };
+};
 
-async function getBlog(blogId: string) {  
+// Centralized API Fetch Function
+async function _fetchFromApi<T>(endpoint: string, params: URLSearchParams = new URLSearchParams()): Promise<T | null> {
   const apiBaseUrl = process.env.BLOG_API_BASE_URL || 'https://danielsaisani.com';
-  let queryParams = new URLSearchParams({ documentId: blogId });
-  const url = `${apiBaseUrl}/api/blogs?${queryParams.toString()}`;
-
-  console.log(`[getBlog] Attempting to fetch from: ${url}`);
+  const url = `${apiBaseUrl}/api/blogs${endpoint}?${params.toString()}`;
+  
+  console.log(`[API] Attempting to fetch from: ${url}`);
   try {
-    const blogResponse = await axios.get(url);
-    console.log(`[getBlog] Successfully fetched from: ${url}. Status: ${blogResponse.status}`);
-    if (blogResponse.data && blogResponse.data.response && blogResponse.data.response.data !== undefined) {
-      return blogResponse.data as BlogResponse;
+    const response = await axios.get(url);
+    console.log(`[API] Successfully fetched from: ${url}. Status: ${response.status}`);
+    if (response.data && response.data.response && response.data.response.data !== undefined) {
+      return response.data as T;
     } else {
-      console.warn(`[getBlog] Unexpected response structure from ${url}:`, JSON.stringify(blogResponse.data, null, 2));
-      return { response: { data: null } };
+      console.warn(`[API] Unexpected response structure from ${url}:`, JSON.stringify(response.data, null, 2));
+      return null;
     }
   } catch (error) {
     if (axios.isAxiosError(error)) {
-      console.error(`[getBlog] Axios error fetching ${url}: ${error.message}. Status: ${error.response?.status}`, error.toJSON());
+      console.error(`[API] Axios error fetching ${url}: ${error.message}. Status: ${error.response?.status}`, error.toJSON());
     } else {
-      console.error(`[getBlog] Generic error fetching ${url}:`, error);
+      console.error(`[API] Generic error fetching ${url}:`, error);
     }
-    return { response: { data: null } };
-  }
-}
-
-async function getAllBlogs() {
-  const apiBaseUrl = process.env.BLOG_API_BASE_URL || 'https://danielsaisani.com';
-  const url = `${apiBaseUrl}/api/blogs/`;
-
-  console.log(`[getAllBlogs] Attempting to fetch from: ${url}`);
-  try {
-    const allBlogsResponse = await axios.get(url);
-    console.log(`[getAllBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
-    if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-      return allBlogsResponse.data as BlogsResponse;
-    } else {
-      console.warn(`[getAllBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-      return { response: { data: [] } };
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`[getAllBlogs] Axios error fetching ${url}: ${error.message}. Status: ${error.response?.status}`, error.toJSON());
-    } else {
-      console.error(`[getAllBlogs] Generic error fetching ${url}:`, error);
-    }
-    return { response: { data: [] } }; // Ensure consistent error response structure
-  }
-}
-
-async function getAllUnpublishedBlogs() {
-  const apiBaseUrl = process.env.BLOG_API_BASE_URL || 'https://danielsaisani.com';
-  const url = `${apiBaseUrl}/api/blogs?status=draft`;
-
-  console.log(`[getAllUnpublishedBlogs] Attempting to fetch from: ${url}`);
-  try {
-    const allBlogsResponse = await axios.get(url);
-    console.log(`[getAllUnpublishedBlogs] Successfully fetched from: ${url}. Status: ${allBlogsResponse.status}`);
-    if (allBlogsResponse.data && allBlogsResponse.data.response && Array.isArray(allBlogsResponse.data.response.data)) {
-      return allBlogsResponse.data as UnpublishedBlogsResponse;
-    } else {
-      console.warn(`[getAllUnpublishedBlogs] Unexpected response structure from ${url}:`, JSON.stringify(allBlogsResponse.data, null, 2));
-      return { response: { data: [] } };
-    }
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error(`[getAllUnpublishedBlogs] Axios error fetching ${url}: ${error.message}. Status: ${error.response?.status}`, error.toJSON());
-    } else {
-      console.error(`[getAllUnpublishedBlogs] Generic error fetching ${url}:`, error);
-    }
-    return { response: { data: [] } }; // Ensure consistent error response structure
-  }
-}
-
-async function getAllUnpublishedBlogData() {
-  console.log('[getAllUnpublishedBlogData] Starting...');
-  let publishedBlogObjects = await getAllBlogs();
-  let blogObjects = await getAllUnpublishedBlogs();
-  console.log(`[getAllUnpublishedBlogData] Fetched published count: ${publishedBlogObjects?.response?.data?.length || 0}, unpublished count: ${blogObjects?.response?.data?.length || 0}`);
-
-  const data = (blogObjects?.response?.data || []).map((blogObject) => { // Added null checks
-    const blogId = blogObject.documentId;
-    const slug = blogObject.slug;
-    const title = blogObject.title;
-    const publishedAt = blogObject.publishedAt;
-    const documentId = blogObject.documentId;
-
-    return {
-      slug,
-      title,
-      publishedAt,
-      documentId,
-    };
-  }).filter((blogObject) => {
-    return !blogObject.publishedAt && !(publishedBlogObjects?.response?.data || []).map((blog) => blog.documentId).includes(blogObject.documentId); // Added null checks
-  });
-  console.log(`[getAllUnpublishedBlogData] Filtered to ${data.length} truly unpublished entries.`);
-  return data;
-}
-
-async function getAllBlogData() {
-  console.log('[getAllBlogData] Starting...');
-  let blogObjects = await getAllBlogs();
-  console.log(`[getAllBlogData] Fetched ${blogObjects?.response?.data?.length || 0} blog metadata entries.`);
-
-  const data = (blogObjects?.response?.data || []).map((blogObject) => { // Added null check
-    const blogId = blogObject.documentId;
-    const slug = blogObject.slug;
-    const publishedAt = blogObject.publishedAt;
-    const title = blogObject.title;
-
-    return {
-      publishedAt,
-      slug,
-      title,
-      blogId
-    };
-  });
-  return data;
-}
-
-async function getBlogData(blogId: string) {
-  console.log(`[getBlogData] Getting full blog data for blogId: ${blogId}`);
-  let blogObject = await getBlog(blogId);
-
-  if (!blogObject?.response?.data) { // Added null checks
-    console.warn(`[getBlogData] No data found for blogId: ${blogId}`);
     return null;
   }
-  console.log(`[getBlogData] Successfully retrieved data for blogId: ${blogId}, title: ${blogObject.response.data.title}`);
+}
+
+// Internal Helper Functions
+async function _getBlog(blogId: string): Promise<BlogResponse | null> {
+  const queryParams = new URLSearchParams({ documentId: blogId });
+  return _fetchFromApi<BlogResponse>('/', queryParams);
+}
+
+async function _getAllBlogs(): Promise<BlogsResponse | null> {
+  return _fetchFromApi<BlogsResponse>('/');
+}
+
+async function _getAllUnpublishedBlogs(): Promise<UnpublishedBlogsResponse | null> {
+  const queryParams = new URLSearchParams({ status: 'draft' });
+  return _fetchFromApi<UnpublishedBlogsResponse>('/', queryParams);
+}
+
+async function _getAllUnpublishedBlogData() {
+  console.log('[Data] Starting to get all unpublished blog data...');
+  const publishedBlogs = await _getAllBlogs();
+  const unpublishedBlogs = await _getAllUnpublishedBlogs();
+  console.log(`[Data] Fetched published count: ${publishedBlogs?.response?.data?.length || 0}, unpublished count: ${unpublishedBlogs?.response?.data?.length || 0}`);
+
+  const publishedBlogIds = new Set((publishedBlogs?.response?.data || []).map(blog => blog.documentId));
+  
+  const trulyUnpublished = (unpublishedBlogs?.response?.data || []).filter(blog => 
+    !blog.publishedAt && !publishedBlogIds.has(blog.documentId)
+  );
+
+  console.log(`[Data] Filtered to ${trulyUnpublished.length} truly unpublished entries.`);
+  return trulyUnpublished.map(({ slug, title, publishedAt, documentId }) => ({
+    slug,
+    title,
+    publishedAt,
+    documentId,
+  }));
+}
+
+async function _getAllBlogData() {
+  console.log('[Data] Starting to get all blog data...');
+  const blogObjects = await _getAllBlogs();
+  console.log(`[Data] Fetched ${blogObjects?.response?.data?.length || 0} blog metadata entries.`);
+
+  return (blogObjects?.response?.data || []).map(({ publishedAt, slug, title, documentId: blogId }) => ({
+    publishedAt,
+    slug,
+    title,
+    blogId,
+  }));
+}
+
+async function _getBlogData(blogId: string) {
+  console.log(`[Data] Getting full blog data for blogId: ${blogId}`);
+  const blogObject = await _getBlog(blogId);
+
+  if (!blogObject?.response?.data) {
+    console.warn(`[Data] No data found for blogId: ${blogId}`);
+    return null;
+  }
+  console.log(`[Data] Successfully retrieved data for blogId: ${blogId}, title: ${blogObject.response.data.title}`);
   return blogObject.response.data;
 }
 
 // Exported functions - these are the main interface for other modules
 export async function getBlogPosts() {
-  console.log('[getBlogPosts] External API: Fetching all blog posts metadata.');
+  console.log('[API] External: Fetching all blog posts metadata.');
   try {
-    const allBlogs = await getAllBlogData();
-    return allBlogs;
+    return await _getAllBlogData();
   } catch (error) {
-    console.error('[getBlogPosts] Error in external API:', error);
+    console.error('[API] Error in getBlogPosts:', error);
     return [];
   }
 }
 
 export async function getUnpublishedBlogPosts() {
-  console.log('[getUnpublishedBlogPosts] External API: Fetching all unpublished blog posts metadata.');
+  console.log('[API] External: Fetching all unpublished blog posts metadata.');
   try {
-    const allUnpublishedBlogs = await getAllUnpublishedBlogData();
-    return allUnpublishedBlogs;
+    return await _getAllUnpublishedBlogData();
   } catch (error) {
-    console.error('[getUnpublishedBlogPosts] Error in external API:', error);
+    console.error('[API] Error in getUnpublishedBlogPosts:', error);
     return [];
   }
 }
 
 export async function getBlogPost(blogId: string) {
-  console.log(`[getBlogPost] External API: Fetching specific blog post for blogId: ${blogId}`);
+  console.log(`[API] External: Fetching specific blog post for blogId: ${blogId}`);
   try {
-    const blog = await getBlogData(blogId);
-    return blog;
+    return await _getBlogData(blogId);
   } catch (error) {
-    console.error(`[getBlogPost] Error in external API for blogId ${blogId}:`, error);
+    console.error(`[API] Error in getBlogPost for blogId ${blogId}:`, error);
     return null;
   }
 }
