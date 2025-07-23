@@ -12,7 +12,7 @@ const Hero: React.FC = () => {
             
             <h1 className="font-semibold text-2xl tracking-tighter inline-flex items-center">
                 <TypingText
-                    text={"hello hello! I'm Daniel"}
+                    text={"hello hello! I'm Danny"}
                     typingSpeed={10}
                     onComplete={() => setisHeaderTypingComplete(true)}
                 />

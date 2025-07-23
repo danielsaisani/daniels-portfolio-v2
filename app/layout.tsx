@@ -17,15 +17,15 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://danielsaisani.com';
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: 'Daniel Saisani',
-    template: '%s | Daniel Saisani',
+    default: 'Danny Saisani',
+    template: '%s | Danny Saisani',
   },
   description: 'Engineer, innovator, and content creator.',
   openGraph: {
-    title: 'Daniel Saisani',
+    title: 'Danny Saisani',
     description: 'Engineer, innovator, and content creator.',
     url: siteUrl,
-    siteName: 'Daniel Saisani',
+    siteName: 'Danny Saisani',
     locale: 'en_US',
     type: 'website',
     images: [`${siteUrl}/opengraph-image-v2.png`],
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: 'Daniel Saisani',
+    title: 'Danny Saisani',
     card: 'summary_large_image',
   },
   verification: {
