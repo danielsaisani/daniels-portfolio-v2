@@ -10,6 +10,7 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 import { CustomMDX } from '@/app/components/ui/mdx';
 import ViewCounter from '../view-counter';
 import { increment } from '@/app/db/actions';
+import ScrollableContainer from '@/app/components/ui/ScrollableContainer';
 // import { unstable_noStore as noStore } from 'next/cache'; // noStore call was removed from formatDate
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'; // Add this import
@@ -89,6 +90,7 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -157,15 +159,17 @@ export default function BlogPostClientPage({ params }: { params: { slug: string 
         </p>
         <ClientViews slug={postData.slug} />
       </div>
-      <article className="text-light prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
-        {postData.mdxSource ? (
-          <CustomMDX mdxSource={postData.mdxSource} />
-        ) : (
-          <p>Error loading content or content is empty.</p>
-          // Or some other appropriate fallback if mdxSource is null/undefined
-          // This might happen if serialization failed on the server and API returned null for mdxSource
-        )}
-      </article>
+      <ScrollableContainer>
+        <article className="text-light prose prose-quoteless prose-neutral dark:prose-invert max-w-none">
+          {postData.mdxSource ? (
+            <CustomMDX mdxSource={postData.mdxSource} />
+          ) : (
+            <p>Error loading content or content is empty.</p>
+            // Or some other appropriate fallback if mdxSource is null/undefined
+            // This might happen if serialization failed on the server and API returned null for mdxSource
+          )}
+        </article>
+      </ScrollableContainer>
     </section>
   );
 }

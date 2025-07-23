@@ -7,7 +7,9 @@ const Hero: React.FC = () => {
     const [isHeaderTypingComplete, setisHeaderTypingComplete] = useState(false);
 
     return (
+
         <div className={'flex flex-col gap-4 animate-fadeIn h-screen'}>
+            
             <h1 className="font-semibold text-2xl tracking-tighter inline-flex items-center">
                 <TypingText
                     text={"hello hello! I'm Daniel"}
@@ -15,6 +17,7 @@ const Hero: React.FC = () => {
                     onComplete={() => setisHeaderTypingComplete(true)}
                 />
             </h1>
+            
             <p className="tracking-tighter">
                 {isHeaderTypingComplete && (
                     <TypingText
@@ -25,6 +28,7 @@ const Hero: React.FC = () => {
                 )}
             </p>
         </div>
+
     );
 };
 
