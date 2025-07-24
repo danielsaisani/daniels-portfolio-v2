@@ -32,24 +32,24 @@ const Hero: React.FC = () => {
                 )}
             </p>
             {isBioTypingComplete && (
-                    <motion.div className="mt-8"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 0.1 }}
-                    >
-                        <BulletJournalText text="[ ] An open task" />
-                        <BulletJournalText text="[X] A completed task" />
-                        <BulletJournalText text="o An event">
-                            <BulletJournalText text="o you've been confused by the presence of this bullet point, but then you remember a disclaimer I left on a previous blog, and now.. you understand" />
+                <motion.div className="mt-8"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                >
+                    <BulletJournalText text="[ ] An open task" />
+                    <BulletJournalText text="[X] A completed task" />
+                    <BulletJournalText text="o An event">
+                        <BulletJournalText text="o you've been confused by the presence of this bullet point, but then you remember a disclaimer I left on a previous blog, and now.. you understand" />
+                    </BulletJournalText>
+                    <BulletJournalText text="- A standard note">
+                        <BulletJournalText text="- An indented note" >
+                            <BulletJournalText text="- Another indented note" />
                         </BulletJournalText>
-                        <BulletJournalText text="- A standard note">
-                            <BulletJournalText text="- An indented note" >
-                                <BulletJournalText text="- Another indented note" />
-                            </BulletJournalText>
-                        </BulletJournalText>
-                        <BulletJournalText text="!- An important note" />
-                    </motion.div>
-                )}
+                    </BulletJournalText>
+                    <BulletJournalText text="!- An important note" />
+                </motion.div>
+            )}
         </div>
 
     );
