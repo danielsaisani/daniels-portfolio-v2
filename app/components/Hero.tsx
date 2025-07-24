@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import TypingText from "./ui/text";
 import BulletJournalText from "./ui/BulletJournalText";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 const Hero: React.FC = () => {
     const [isHeaderTypingComplete, setisHeaderTypingComplete] = useState(false);
@@ -32,11 +32,10 @@ const Hero: React.FC = () => {
                 )}
             </p>
             {isBioTypingComplete && (
-                <AnimatePresence>
                     <motion.div className="mt-8"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.5, delay: 0.1 }}
                     >
                         <BulletJournalText text="[ ] An open task" />
                         <BulletJournalText text="[X] A completed task" />
@@ -50,7 +49,7 @@ const Hero: React.FC = () => {
                         </BulletJournalText>
                         <BulletJournalText text="!- An important note" />
                     </motion.div>
-                </AnimatePresence>)}
+                )}
         </div>
 
     );
