@@ -4,8 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { MDXRemote } from 'next-mdx-remote';
 import { TweetComponent } from './tweet';
-import React from 'react';
+import React, { Children } from 'react';
 import { LiveCode } from './sandpack';
+import { highlight } from 'sugar-high';
 
 type TableData = {
   headers: string[];
@@ -25,12 +26,14 @@ function Table({ data }: { data: TableData }) {
   ));
 
   return (
-    <table>
-      <thead>
-        <tr>{headers}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+        <thead className="bg-gray-50 dark:bg-gray-800">
+          <tr>{headers}</tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-900 dark:divide-gray-700">{rows}</tbody>
+      </table>
+    </div>
   );
 }
 
@@ -45,17 +48,17 @@ function CustomLink(props: CustomLinkProps) {
   if (href.startsWith('/')) {
     const { href, ...rest } = props;
     return (
-      <Link href={href} {...rest}>
+      <Link href={href} {...rest} className="text-white">
         {props.children}
       </Link>
     );
   }
 
   if (href.startsWith('#')) {
-    return <a {...props} />;
+    return <a {...props} className="text-white"/>;
   }
 
-  return <a target="_blank" rel="noopener noreferrer" {...props} />;
+  return <a target="_blank" rel="noopener noreferrer" {...props} className="text-white"/>;
 }
 
 type RoundedImageProps = React.ComponentProps<typeof Image> & {
@@ -144,59 +147,38 @@ function ConsCard({ title, cons }: ConsCardProps) {
   );
 }
 
-type CodeProps = React.PropsWithChildren<React.HTMLAttributes<HTMLPreElement>>;
-
-function Code({ children, ...props }: CodeProps) {
-  // Ensure children is a string, default to empty string if not
-  const codeContent = typeof children === 'string' ? children : '';
-  return (
-    <pre {...props}> {/* Use <pre> for semantic code blocks */}
-      <code>{codeContent}</code>
-    </pre>
-  );
+function CodeBlock({ children }: { children?: React.ReactNode }) {
+  const codeElement = React.Children.only(children) as React.ReactElement;
+  const codeString = codeElement.props.children;
+  const highlightedCode = highlight(codeString);
+  return <div className="bg-gray-900 p-4 rounded-md" dangerouslySetInnerHTML={{ __html: highlightedCode }} />;
 }
 
-// Explicitly type the parameter for better type safety and clarity
 function slugify(str: string) {
   return str
     .toString()
     .toLowerCase()
-    .trim() // Remove whitespace from both ends of a string
-    .replace(/\s+/g, '-') // Replace spaces with -
-    .replace(/&/g, '-and-') // Replace & with 'and'
-    .replace(/[^\w\-]+/g, '') // Remove all non-word characters except for -
-    .replace(/\-\-+/g, '-'); // Replace multiple - with single -
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/&/g, '-and-')
+    .replace(/[^\w\-]+/g, '')
+    .replace(/\-\-+/g, '-');
 }
 
-// Explicitly type the parameter for better type safety and clarity
 function createHeading(level: number) {
+  // eslint-disable-next-line react/display-name
   return ({ children }: { children: React.ReactNode }) => {
-    // Convert children to string for slugification (handles string or array of strings)
-    const text =
-      typeof children === 'string'
-        ? children
-        : Array.isArray(children)
-          ? children.join('')
-          : '';
-
+    const text = Children.toArray(children).join('');
     let slug = slugify(text);
-
     return React.createElement(
       `h${level}`,
-      { id: slug },
-      [
-        React.createElement('a', {
-          href: `#${slug}`,
-          key: `link-${slug}`,
-          className: 'anchor',
-        }),
-      ],
-      children
+      { id: slug, className: "font-bold text-white" },
+      <>{children}</>
     );
   };
 }
 
-let components = {
+export let mdxComponents = {
   h1: createHeading(1),
   h2: createHeading(2),
   h3: createHeading(3),
@@ -205,31 +187,45 @@ let components = {
   h6: createHeading(6),
   Image: RoundedImage,
   a: CustomLink,
+  p: (props: React.HTMLAttributes<HTMLParagraphElement>) => <p className="text-white mb-4" {...props} />,
+  strong: (props: React.HTMLAttributes<HTMLElement>) => <strong className="font-bold text-white" {...props} />,
+  em: (props: React.HTMLAttributes<HTMLElement>) => <em className="italic text-white" {...props} />,
+  del: (props: React.HTMLAttributes<HTMLElement>) => <del className="line-through text-gray-400" {...props} />,
+  ul: (props: React.HTMLAttributes<HTMLUListElement>) => <ul className="list-disc list-outside pl-5 mb-4" {...props} />,
+  ol: (props: React.HTMLAttributes<HTMLOListElement>) => <ol className="list-decimal list-outside pl-5 mb-4" {...props} />,
+  li: (props: React.HTMLAttributes<HTMLLIElement>) => <li className="mb-2" {...props} />,
+  blockquote: (props: React.HTMLAttributes<HTMLQuoteElement>) => <blockquote className="border-l-4 border-gray-500 pl-4 italic my-4" {...props} />,
+  hr: (props: React.HTMLAttributes<HTMLHRElement>) => <hr className="border-gray-700 my-8" {...props} />,
+  pre: CodeBlock,
+  code: (props: React.HTMLAttributes<HTMLElement>) => <code className="bg-gray-800 text-pink-400 rounded px-1 py-0.5" {...props} />,
+  table: (props: React.HTMLAttributes<HTMLTableElement>) => <div className="overflow-x-auto"><table className="min-w-full divide-y divide-gray-700" {...props} /></div>,
+  thead: (props: React.HTMLAttributes<HTMLTableSectionElement>) => <thead className="bg-gray-800" {...props} />,
+  tbody: (props: React.HTMLAttributes<HTMLTableSectionElement>) => <tbody className="divide-y divide-gray-700" {...props} />,
+  tr: (props: React.HTMLAttributes<HTMLTableRowElement>) => <tr className="dark:bg-gray-900" {...props} />,
+  th: (props: React.HTMLAttributes<HTMLTableCellElement>) => <th className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider" {...props} />,
+  td: (props: React.HTMLAttributes<HTMLTableCellElement>) => <td className="px-6 py-4 whitespace-nowrap text-sm text-white" {...props} />,
   Callout,
   ProsCard,
   ConsCard,
   StaticTweet: TweetComponent,
-  code: Code, // Using the simplified Code component
   Table,
   LiveCode,
 };
 
 interface CustomMDXProps {
-  mdxSource: any; // You can replace 'any' with a more specific type if available
+  mdxSource: any;
   components?: Record<string, React.ComponentType<any>>;
 }
 
 export function CustomMDX(props: CustomMDXProps) {
-  // The 'props' should contain mdxSource, and optionally 'components' for overrides
   if (!props.mdxSource) {
-    // Or return a more specific error/fallback UI
     return <p>Error: MDX content not available.</p>;
   }
 
   return (
     <MDXRemote
-      {...props.mdxSource} // Spread the serialized MDX object (e.g., compiledSource, frontmatter)
-      components={{ ...components, ...(props.components || {}) }} // Use the restored full 'components' map
+      {...props.mdxSource}
+      components={{ ...mdxComponents, ...(props.components || {}) }}
     />
   );
 }

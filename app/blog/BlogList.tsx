@@ -6,6 +6,7 @@ import { Skeleton } from '@/app/components/ui/skeleton';
 import ViewCounter from './view-counter';
 import { LottieAnimation } from '@/app/components/ui/animation';
 import { BlogCard, ComingSoonCard } from '@/app/components/ui/cards';
+import ScrollableContainer from '@/app/components/ui/ScrollableContainer';
 interface ApiPost {
   id: number;
   documentId: string;
@@ -139,45 +140,47 @@ export default function BlogList() {
   }
 
   return (
-    <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts.length > 0 ? (
-          posts.slice(0, 9).map((post) => (
-            <BlogCard
-              key={post.id}
-              title={post.title}
-              date={new Date(post.publishedAt).toLocaleDateString()}
-              href={`/blog/${post.slug}`}
-            >
-              {post.slug && (
-                <Suspense fallback={<div className="h-5 w-10 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
-                  <ViewCounter slug={post.slug} allViews={allViewsData} />
-                </Suspense>
-              )}
-            </BlogCard>
-          ))
-        ) : (
-          <div className="col-span-3 text-center py-10 text-lg text-gray-400">No published posts yet. Check back soon!</div>
-        )}
-      </div>
+    <ScrollableContainer>
+      <div className="w-full p-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {posts.length > 0 ? (
+            posts.slice(0, 9).map((post) => (
+              <BlogCard
+                key={post.id}
+                title={post.title}
+                date={new Date(post.publishedAt).toLocaleDateString()}
+                href={`/blog/${post.slug}`}
+              >
+                {post.slug && (
+                  <Suspense fallback={<div className="h-5 w-10 animate-pulse bg-gray-200 dark:bg-gray-700 rounded-md"></div>}>
+                    <ViewCounter slug={post.slug} allViews={allViewsData} />
+                  </Suspense>
+                )}
+              </BlogCard>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-10 text-lg text-gray-400">No published posts yet. Check back soon!</div>
+          )}
+        </div>
 
-      <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Coming Soon</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {comingSoonPosts.length > 0 ? (
-          comingSoonPosts.slice(0, 9).map((post) => (
-            <ComingSoonCard
-              key={post.documentId || post.id}
-              title={post.title}
-            >
-              <Suspense fallback={<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>}>
-                <LottieAnimation width={30} height={30} type={'writing'} />
-              </Suspense>
-            </ComingSoonCard>
-          ))
-        ) : (
-          <div className="col-span-3 text-center py-10 text-lg text-gray-400">No upcoming posts announced yet.</div>
-        )}
+        <h2 className="text-2xl font-bold mt-12 mb-6 text-center">Coming Soon</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {comingSoonPosts.length > 0 ? (
+            comingSoonPosts.slice(0, 9).map((post) => (
+              <ComingSoonCard
+                key={post.documentId || post.id}
+                title={post.title}
+              >
+                <Suspense fallback={<div className="h-8 w-8 bg-gray-200 dark:bg-gray-700 rounded"></div>}>
+                  <LottieAnimation width={30} height={30} type={'writing'} />
+                </Suspense>
+              </ComingSoonCard>
+            ))
+          ) : (
+            <div className="col-span-3 text-center py-10 text-lg text-gray-400">No upcoming posts announced yet.</div>
+          )}
+        </div>
       </div>
-    </div>
+    </ScrollableContainer>
   );
 }
