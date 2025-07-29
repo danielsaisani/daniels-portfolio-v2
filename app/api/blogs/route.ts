@@ -11,6 +11,7 @@ const BlogServerApiBlogsResponseSchema = z.object({
             slug: z.string().nullable(),
             publishedAt: z.string().nullable(),
             updatedAt: z.string(),
+            createdAt: z.string(),
         })
     ).nullable()
 })
@@ -23,6 +24,7 @@ const BlogServerApiBlogResponseSchema = z.object({
         description: z.string().nullable(),
         slug: z.string().nullable(),
         publishedAt: z.string(),
+        createdAt: z.string(),
         updatedAt: z.string(),
         author: z.object({
             name: z.string()
