@@ -1,18 +1,19 @@
 'use client';
 
-import Link from 'next/link';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/app/components/ui/skeleton';
 import ViewCounter from './view-counter';
 import { LottieAnimation } from '@/app/components/ui/animation';
 import { BlogCard, ComingSoonCard } from '@/app/components/ui/cards';
 import ScrollableContainer from '@/app/components/ui/ScrollableContainer';
+
 interface ApiPost {
   id: number;
   documentId: string;
   title: string;
   slug: string;
   publishedAt: string | null;
+  createdAt: string;
 }
 
 interface PublishedPost extends ApiPost {
