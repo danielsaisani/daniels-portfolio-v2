@@ -39,9 +39,7 @@ const Hero: React.FC = () => {
                 >
                     <BulletJournalText text="[ ] An open task" />
                     <BulletJournalText text="[X] A completed task" />
-                    <BulletJournalText text="o An event">
-                        <BulletJournalText text="o you've been confused by the presence of this bullet point, but then you remember a disclaimer I left on a previous blog, and now.. you understand" />
-                    </BulletJournalText>
+                    <BulletJournalText text="o you've been confused by the presence of this bullet point, but then you remember a disclaimer I left on a previous blog, and now.. you understand" />
                     <BulletJournalText text="- A standard note">
                         <BulletJournalText text="- An indented note" >
                             <BulletJournalText text="- Another indented note" />
