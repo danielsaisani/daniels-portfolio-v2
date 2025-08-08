@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
             <p className="tracking-tighter">
                 {isHeaderTypingComplete && (
                     <TypingText
-                        text={"full-stack software engineer, ex-SWE @ Terra YC W21 and comp sci grad @ King's College London"}
+                        text={"currently a software engineer @ Cisco, ex-SWE @ Terra YC W21 and comp sci grad @ King's College London"}
                         typingSpeed={10}
                         caretClassName="bg-white align-middle ml-[3px] inline-block"
                         onComplete={() => setisBioTypingComplete(true)}
