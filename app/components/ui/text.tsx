@@ -25,23 +25,6 @@ const TypingText: React.FC<TypingTextProps> = ({
     let symbol: React.ReactNode = null;
     let content = text;
 
-    if (text.startsWith('[X] ')) {
-        symbol = <span className="mr-2">⊗</span>;
-        content = text.substring(4);
-    } else if (text.startsWith('[ ] ')) {
-        symbol = <span className="mr-2">•</span>;
-        content = text.substring(4);
-    } else if (text.startsWith('o ')) {
-        symbol = <span className="mr-2">○</span>;
-        content = text.substring(2);
-    } else if (text.startsWith('!- ')) {
-        symbol = <span className="mr-2">!-</span>;
-        content = text.substring(3);
-    } else if (text.startsWith('- ')) {
-        symbol = <span className="mr-2">-</span>;
-        content = text.substring(2);
-    }
-    
     useEffect(() => {
         let timer: NodeJS.Timeout;
         if (displayedText.length < content.length) {
@@ -56,7 +39,7 @@ const TypingText: React.FC<TypingTextProps> = ({
         }
         return () => clearTimeout(timer);
     }, [displayedText, content, typingSpeed, onComplete]);
-    
+
     return (
         <div className={className}>
             <div className="flex items-start">
@@ -76,4 +59,96 @@ const TypingText: React.FC<TypingTextProps> = ({
     );
 };
 
-export default TypingText;
+const getTextFromChildren = (children: React.ReactNode): string => {
+    let text = '';
+    React.Children.forEach(children, (child) => {
+        if (typeof child === 'string' || typeof child === 'number') {
+            text += child.toString();
+        } else if (React.isValidElement(child) && child.props.children) {
+            text += getTextFromChildren(child.props.children);
+        }
+    });
+    return text;
+};
+
+interface TypingProps {
+    children: React.ReactNode;
+    typingSpeed?: number;
+    className?: string;
+    onComplete?: () => void;
+    caretClassName?: string;
+    caretStyle?: React.CSSProperties;
+}
+
+const Typing: React.FC<TypingProps> = ({
+    children,
+    typingSpeed = 50,
+    className = 'pl-6',
+    onComplete,
+    caretClassName = '',
+    caretStyle = {},
+}) => {
+    const [textLength, setTextLength] = useState(0);
+    const fullText = React.useMemo(() => getTextFromChildren(children), [children]);
+
+    useEffect(() => {
+        if (textLength < fullText.length) {
+            const timer = setTimeout(() => {
+                setTextLength(prevLength => prevLength + 1);
+            }, typingSpeed);
+            return () => clearTimeout(timer);
+        } else {
+            if (onComplete) {
+                onComplete();
+            }
+        }
+    }, [textLength, fullText, typingSpeed, onComplete]);
+
+    const renderTypedChildren = (nodes: React.ReactNode, length: number): [React.ReactNode, number] => {
+        let len = length;
+
+        const mapped = React.Children.map(nodes, node => {
+            if (len <= 0 || !node) return null;
+
+            if (typeof node === 'string') {
+                const nodeLen = node.length;
+                const displayNode = node.slice(0, len);
+                len -= nodeLen;
+                return displayNode;
+            }
+
+            if (React.isValidElement(node)) {
+                if (!node.props.children) return len > 0 ? node : null;
+
+                const [children, newLen] = renderTypedChildren(node.props.children, len);
+                len = newLen;
+
+                if (children === null || (Array.isArray(children) && children.every(c => c === null))) {
+                    return null;
+                }
+
+                return React.cloneElement(node, { ...node.props, children });
+            }
+            return null;
+        });
+
+        return [mapped, len];
+    };
+
+    const [displayedChildren] = renderTypedChildren(children, textLength);
+    const isTyping = textLength < fullText.length;
+
+    return (
+        <div className={className}>
+            {displayedChildren}
+            {isTyping && (
+                <span
+                    className={`w-[2px] h-[1.2em] bg-white ml-[2px] animate-caret ${caretClassName}`}
+                    style={caretStyle}
+                ></span>
+            )}
+        </div>
+    );
+}
+
+export { TypingText, Typing };

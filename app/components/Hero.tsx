@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react";
-import TypingText from "./ui/text";
+import { TypingText } from "./ui/text";
 import BulletJournalText from "./ui/BulletJournalText";
 import { motion } from "framer-motion";
 
@@ -24,7 +24,7 @@ const Hero: React.FC = () => {
             <p className="tracking-tighter">
                 {isHeaderTypingComplete && (
                     <TypingText
-                        text={"currently a software engineer @ Cisco, ex-SWE @ Terra YC W21 and comp sci grad @ King's College London"}
+                        text={"currently a software engineer @ cisco, ex-swe @ terra yc w21 and comp sci grad @ king's college london"}
                         typingSpeed={10}
                         caretClassName="bg-white align-middle ml-[3px] inline-block"
                         onComplete={() => setisBioTypingComplete(true)}
@@ -48,6 +48,13 @@ const Hero: React.FC = () => {
                     <BulletJournalText text="!- An important note" />
                 </motion.div>
             )}
+
+            {/* TODO: Add NPB Landing Page As Project + Outcomes */}
+            {/* TODO: Add Tiktok Bot As Project */}
+            {/* TODO: Add Path Finder As Project */}
+            {/* TODO: Add Turing Machine Visualiser As Project */}
+
+
         </div>
 
     );
